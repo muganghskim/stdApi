@@ -1,4 +1,3 @@
-
 server:
   port: 8096
 
@@ -27,3 +26,8 @@ logging:
 storage:
   upload-dir: D:\kimhs\portfolio\envfront\public\img
 
+jwt:
+  secret: YuwAmhjpWRpr77HP1dOq0jECdZbbjzgvq5K2kTBju49kLRs7s56dVZ/MeoJW97gbuewZwuEe1W/5gbIqQaBYzw==
+  tokenValidity: 3600000
+  ref: Lqs9ei2oAAK2NUB2sG8Rdxnmr3enYBaaXvoisQtbwb4cstworM5DHZf1jvIPXu7h1aT8dFh7Ac1bVVh+hNzzrA==
+  reftokenValidity: 15778476
