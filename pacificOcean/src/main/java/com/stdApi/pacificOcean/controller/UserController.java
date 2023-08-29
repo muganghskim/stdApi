@@ -51,9 +51,14 @@ public class UserController {
     // 회원가입
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public Member signUp(@RequestBody SignUpRequest signUpRequest) {
+    public Member signUp(@RequestBody SignUpRequest signUpRequest) throws Exception{
+        if (!userService.isVerified(signUpRequest.getUserEmail())) {
+            throw new Exception("Unverified email address");
+        }
+
         return userService.signUp(signUpRequest.getUserEmail(), signUpRequest.getPassword(), signUpRequest.getUsername());
     }
+
 
     // 로그인
     @PostMapping("/login")
@@ -122,6 +127,31 @@ public class UserController {
             return ResponseEntity.ok(Collections.singletonMap("accessToken", newAccessToken));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Refresh Token");
+        }
+    }
+
+    // 이메일로 인증 코드 보내기
+    @PostMapping("/send-verification-email")
+    public ResponseEntity<?> sendVerificationEmail(@RequestBody String userEmail) {
+        try {
+            userService.sendVerificationEmail(userEmail);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // 이메일 인증 코드 확인
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> verificationRequest) {
+        String userEmail = verificationRequest.get("userEmail");
+        String code = verificationRequest.get("code");
+
+        try {
+            userService.verifyEmail(userEmail, code);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 }

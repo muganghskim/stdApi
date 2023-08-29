@@ -1,5 +1,6 @@
 package com.stdApi.pacificOcean.config;
 
+import com.stdApi.pacificOcean.service.CustomOAuth2UserService;
 import com.stdApi.pacificOcean.util.JwtAuthenticationEntryPoint;
 import com.stdApi.pacificOcean.util.JwtAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
@@ -22,14 +23,17 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
+
+    private final CustomOAuth2UserService customOAuth2UserService;
     private JwtConfiguration jwtConfig;
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     public SecurityConfig(UserDetailsService userDetailsService, JwtConfiguration jwtConfig,
-                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, CustomOAuth2UserService customOAuth2UserService) {
         this.userDetailsService = userDetailsService;
         this.jwtConfig = jwtConfig;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.customOAuth2UserService = customOAuth2UserService;
     }
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -71,6 +75,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/","/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .and()
+                .oauth2Login()
+                    .defaultSuccessUrl("/loginSuccess")  // 로그인 성공 후 리다이렉트할 URL
+                    .failureUrl("/loginFailure")         // 로그인 실패 후 리다이렉트할 URL
+                    .userInfoEndpoint()                  // 사용자 정보를 가져올 때의 설정들을 담당합니다.
+                    .userService(customOAuth2UserService);  // 소셜 로그인 성공 시 후속 조치를 진행할 UserService 인터페이스의 구현체 등록
     }
 }

@@ -8,27 +8,19 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@Table(name = "Transaction")
+@Table(name = "EmailAuth")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Transaction {
+public class EmailAuth {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tid;
+    private Long authId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "userNo")
-    private Member member;
+    private String email;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pdNo")
-    private Product product;
+    private String code;
 
-    private String rcvName;
-
-    private String rcvPhn;
-
-    private String tidStat;
+    private String verify;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
@@ -38,12 +30,17 @@ public class Transaction {
     @Column(nullable = false)
     private Date updatedAt;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    private Date expiresAt;
+
     // PrePersist is used before the very first time the object is inserted into the database.
     // This will set both createdAt and updatedAt timestamps to the current time when a new entity is created.
     @PrePersist
     protected void onCreate() {
         this.createdAt= new Date();
         this.updatedAt= new Date();
+        this.expiresAt = new Date(System.currentTimeMillis() + 300000);
     }
 
     // PreUpdate is used before any update on the data occurs,
@@ -52,13 +49,12 @@ public class Transaction {
     protected void onUpdate() {
         this.updatedAt= new Date();
     }
+
     @Builder
-    public Transaction(Long tid, Member member, Product product, String orderDttm, String address1, String address2, String address3, String rcvName, String rcvPhn, String tidStat) {
-        this.tid = tid;
-        this.member = member;
-        this.product = product;
-        this.rcvName = rcvName;
-        this.rcvPhn = rcvPhn;
-        this.tidStat = tidStat;
+    public EmailAuth(Long authId, String email, String code, String verify) {
+        this.authId = authId;
+        this.email = email;
+        this.code = code;
+        this.verify = verify;
     }
 }
