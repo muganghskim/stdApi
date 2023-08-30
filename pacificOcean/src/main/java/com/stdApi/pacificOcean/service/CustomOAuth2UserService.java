@@ -2,8 +2,8 @@ package com.stdApi.pacificOcean.service;
 
 import com.stdApi.pacificOcean.model.Member;
 import com.stdApi.pacificOcean.repository.UserRepository;
-import com.stdApi.pacificOcean.util.JwtProvider;
 import com.stdApi.pacificOcean.util.OAuthAttributes;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,14 +20,13 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
+@Slf4j
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private JwtProvider jwtConfig;
+
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -47,13 +46,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // Create an Authentication object for the user
         Authentication authentication = new UsernamePasswordAuthenticationToken(member.getUserEmail(), null, Collections.singleton(new SimpleGrantedAuthority(member.getUserRole())));
-
-        // Generate a new JWT for the authenticated user
-        String token = jwtConfig.generateToken(authentication);
-
-        // Add the token to the attributes so it can be included in the response
-        Map<String, Object> userAttributes = new HashMap<>();
-        userAttributes.put("token", token);
+// 토큰 추가 필요없음 제거
+//        // Generate a new JWT for the authenticated user
+//        String token = jwtConfig.generateToken(authentication);
+//
+//        // Add the token to the attributes so it can be included in the response
+//        Map<String, Object> userAttributes = new HashMap<>();
+//        userAttributes.put("default", "default");
+        Map<String, Object> userAttributes = new HashMap<>(oAuth2User.getAttributes());
 
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(member.getUserRole())),

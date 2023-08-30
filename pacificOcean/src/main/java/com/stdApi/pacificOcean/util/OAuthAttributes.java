@@ -56,7 +56,6 @@ public class OAuthAttributes {
     }
 
     private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
-
         return new OAuthAttributes(attributes,
                 userNameAttributeName,
                 (String) attributes.get("name"),

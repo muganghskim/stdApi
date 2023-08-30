@@ -8,11 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Map;
 
@@ -25,7 +28,7 @@ public class UserController {
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService ){
         this.userService = userService;
     }
 
@@ -144,7 +147,7 @@ public class UserController {
     // 이메일 인증 코드 확인
     @PostMapping("/verify-email")
     public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> verificationRequest) {
-        String userEmail = verificationRequest.get("userEmail");
+        String userEmail = verificationRequest.get("email");
         String code = verificationRequest.get("code");
 
         try {
@@ -154,4 +157,33 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+
+//    // 쿠키 사용방법
+//    @GetMapping("/loginSuccess")
+//    public void getLoginInfo(HttpServletResponse response, OAuth2AuthenticationToken token) throws IOException {
+//        String userEmail = token.getPrincipal().getAttribute("email");
+//        String jwt = userService.simpleLogin(userEmail);
+//
+//        // Create a new cookie with the JWT token
+//        Cookie jwtCookie = new Cookie("jwt", jwt);
+//
+//        response.addCookie(jwtCookie);
+//
+//        log.info("jwtCookie={}", jwtCookie);
+//        log.info("jwt={}", jwt);
+//        // Redirect to the client app
+//        response.sendRedirect("http://localhost:3000/loginSuccess");
+//    }
+
+    // url 사용방법
+    @GetMapping("/loginSuccess")
+    public void getLoginInfo(HttpServletResponse response, OAuth2AuthenticationToken token) throws IOException {
+        String userEmail = token.getPrincipal().getAttribute("email");
+        String jwt = userService.simpleLogin(userEmail);
+
+        // Redirect to the client app with the JWT token as a URL parameter
+        response.sendRedirect("http://localhost:3000/loginSuccess?token=" + URLEncoder.encode(jwt, "UTF-8"));
+    }
+
 }

@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -216,4 +217,16 @@ public class UserService {
         else return false;
     }
 
+    public String simpleLogin(String userEmail) {
+        // Find the user in your database
+        Optional<Member> optionalMember  = userRepository.findByUserEmail(userEmail);
+        if (optionalMember .isPresent()) {
+            Member member = optionalMember .get();
+            Authentication authentication = new UsernamePasswordAuthenticationToken(member.getUserEmail(), null, Collections.singleton(new SimpleGrantedAuthority(member.getUserRole())));
+            return jwtProvider.generateToken(authentication);
+        }
+        // Create an Authentication object for the user
+        else return null;
+        // Generate a new JWT for the authenticated user
+    }
 }

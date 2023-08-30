@@ -3,6 +3,7 @@ package com.stdApi.pacificOcean.config;
 import com.stdApi.pacificOcean.service.CustomOAuth2UserService;
 import com.stdApi.pacificOcean.util.JwtAuthenticationEntryPoint;
 import com.stdApi.pacificOcean.util.JwtAuthorizationFilter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,13 +18,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
-
     private final CustomOAuth2UserService customOAuth2UserService;
     private JwtConfiguration jwtConfig;
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -78,7 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
                 .oauth2Login()
-                    .defaultSuccessUrl("/loginSuccess")  // 로그인 성공 후 리다이렉트할 URL
+                    .defaultSuccessUrl("/api/loginSuccess")  // 로그인 성공 후 리다이렉트할 URL
                     .failureUrl("/loginFailure")         // 로그인 실패 후 리다이렉트할 URL
                     .userInfoEndpoint()                  // 사용자 정보를 가져올 때의 설정들을 담당합니다.
                     .userService(customOAuth2UserService);  // 소셜 로그인 성공 시 후속 조치를 진행할 UserService 인터페이스의 구현체 등록
