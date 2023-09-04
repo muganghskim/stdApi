@@ -42,7 +42,7 @@ public class OAuthAttributes {
                 userNameAttributeName,
                 (String) profile.get("nickname"),
                 (String) kakao_account.get("email"),
-                (String) profile.get("profile_image_url"));
+                (String) profile.get("profile_image"));
     }
 
     private static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {

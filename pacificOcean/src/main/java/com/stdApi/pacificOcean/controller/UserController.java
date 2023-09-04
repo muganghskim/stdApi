@@ -34,15 +34,20 @@ public class UserController {
 
     @Data
     public static class SignUpRequest {
-        private String userEmail;
+        private String email;
         private String password;
         private String username;
     }
 
     @Data
     public static class LoginRequest {
-        private String userEmail;
+        private String email;
         private String password;
+    }
+
+    @Data
+    public static class EmailRequest {
+        private String email;
     }
 
     @Data
@@ -55,11 +60,11 @@ public class UserController {
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public Member signUp(@RequestBody SignUpRequest signUpRequest) throws Exception{
-        if (!userService.isVerified(signUpRequest.getUserEmail())) {
+        if (!userService.isVerified(signUpRequest.getEmail())) {
             throw new Exception("Unverified email address");
         }
 
-        return userService.signUp(signUpRequest.getUserEmail(), signUpRequest.getPassword(), signUpRequest.getUsername());
+        return userService.signUp(signUpRequest.getEmail(), signUpRequest.getPassword(), signUpRequest.getUsername());
     }
 
 
@@ -67,7 +72,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest loginRequest) {
         try {
-            Map<String, Object> userInfo = userService.login(loginRequest.getUserEmail(), loginRequest.getPassword());
+            Map<String, Object> userInfo = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
             log.info("토큰: " + userInfo.get("token"));
 
             // Return token and user info
@@ -135,9 +140,9 @@ public class UserController {
 
     // 이메일로 인증 코드 보내기
     @PostMapping("/send-verification-email")
-    public ResponseEntity<?> sendVerificationEmail(@RequestBody String userEmail) {
+    public ResponseEntity<?> sendVerificationEmail(@RequestBody EmailRequest request) {
         try {
-            userService.sendVerificationEmail(userEmail);
+            userService.sendVerificationEmail(request.getEmail());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

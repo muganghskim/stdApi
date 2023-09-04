@@ -46,7 +46,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // Create an Authentication object for the user
         Authentication authentication = new UsernamePasswordAuthenticationToken(member.getUserEmail(), null, Collections.singleton(new SimpleGrantedAuthority(member.getUserRole())));
-// 토큰 추가 필요없음 제거
+        log.info("attributes = {}", attributes);
+        // 토큰 추가 필요없음 제거
 //        // Generate a new JWT for the authenticated user
 //        String token = jwtConfig.generateToken(authentication);
 //

@@ -173,12 +173,16 @@ public class UserService {
                     .build();
             emailAuthRepository.save(newEmailAuth);
         }
+        log.info("email={}",userEmail);
 
         // Send the verification code via email
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(userEmail);
+        message.setFrom("rhgustmfrh@gmail.com");
         message.setSubject("Your verification code");
         message.setText("Your verification code is: " + verificationCode);
+
+        log.info("mail message={}", message);
 
         javaMailSender.send(message);
     }
@@ -206,6 +210,7 @@ public class UserService {
     public boolean isVerified(String userEmail) {
         // DB에서 해당 사용자의 '이메일 확인' 상태 가져오기
         Optional<EmailAuth> emailCode = emailAuthRepository.findByEmail(userEmail);
+        log.info("emailCode = {}", emailCode);
         if (!emailCode.isPresent()) {
             return false;
         }
