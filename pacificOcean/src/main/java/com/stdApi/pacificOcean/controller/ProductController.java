@@ -91,7 +91,7 @@ public class ProductController {
     }
 
     // 상품 이름으로 검색
-    @GetMapping("/produstSearch")
+    @GetMapping("/productSearch")
     public ResponseEntity<List<Product>> getProductByName(@RequestParam("searchName") String searchName) {
         List<Product> searchProduct = productService.getProductByName(searchName);
         if (!searchProduct.isEmpty()) {
