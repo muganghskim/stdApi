@@ -56,6 +56,6 @@ public class CartService {
             throw new RuntimeException("회원을 찾을 수 없습니다.");
         }
         Member member = memberOptional.get();
-        return cartRepository.findByuserNo(member);
+        return cartRepository.findByMember(member);
     }
 }

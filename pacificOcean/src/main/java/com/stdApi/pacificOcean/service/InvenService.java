@@ -35,7 +35,7 @@ public class InvenService {
 
     // 상품의 재고 확인
     public boolean checkInventory(Product product){
-        Optional<Inventory> invenOpt = invenRepository.findBypdNo(product);
+        Optional<Inventory> invenOpt = invenRepository.findByProduct(product);
 
         if(!invenOpt.isPresent()){
             throw new RuntimeException("inventory 정보없음");
@@ -58,7 +58,7 @@ public class InvenService {
     // 상품의 재고 추가
     public void increaseInventory(Product product, int quantity){
 
-        Optional<Inventory> invenOpt = invenRepository.findBypdNo(product);
+        Optional<Inventory> invenOpt = invenRepository.findByProduct(product);
 
         if(!invenOpt.isPresent()){
             throw new RuntimeException("inventory 정보없음");
