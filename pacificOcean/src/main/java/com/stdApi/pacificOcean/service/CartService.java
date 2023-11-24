@@ -51,11 +51,34 @@ public class CartService {
     }
 
     public List<Cart> getCartsByUserId(String userEmail) {
-        Optional<Member> memberOptional = userRepository.findByUserEmail(userEmail);
-        if (!memberOptional.isPresent()) {
+        Optional<Member> memberOpt = userRepository.findByUserEmail(userEmail);
+        if (!memberOpt.isPresent()) {
             throw new RuntimeException("회원을 찾을 수 없습니다.");
         }
-        Member member = memberOptional.get();
+        Member member = memberOpt.get();
         return cartRepository.findByMember(member);
+    }
+
+    @Transactional
+    public Cart updateCart(Long cartId, int quantity){
+        Optional<Cart> cartOpt = cartRepository.findById(cartId);
+        if(!cartOpt.isPresent()) {
+            throw new RuntimeException("장바구니에 상품이 존재하지 않습니다.");
+        }
+
+        Cart cart = cartOpt.get();
+        cart.setQuantity(quantity);
+
+        return cart;
+    }
+
+    @Transactional
+    public void deleteCart(Long cartId){
+        Optional<Cart> cartOpt = cartRepository.findById(cartId);
+        if(!cartOpt.isPresent()) {
+            throw new RuntimeException("장바구니에 상품이 존재하지 않습니다.");
+        }
+        Cart cart = cartOpt.get();
+        cartRepository.delete(cart);
     }
 }

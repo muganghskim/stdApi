@@ -34,6 +34,13 @@ public class CartController {
         int quantity;
     }
 
+    @Data
+    public static class UpdateCartReq {
+        Long cartId;
+
+        int quantity;
+    }
+
     // 장바구니 생성
     @PostMapping("/cart/create")
     public ResponseEntity<Cart> addToCart(@RequestBody RegiCartReq regiCartReq) {
@@ -41,11 +48,22 @@ public class CartController {
         return ResponseEntity.ok(cartService.addToCart(regiCartReq.getUserEmail(), regiCartReq.getPdNo(), regiCartReq.getQuantity()));
     }
 
-    //장바구니 전체 조회
-    @GetMapping("/cart/{userId}")
+    // 장바구니 전체 조회
+    @GetMapping("/cart/{userEmail}")
     public ResponseEntity<List<Cart>> getCartsByUserId(@PathVariable("userEmail") String userEmail) {
         return ResponseEntity.ok(cartService.getCartsByUserId(userEmail));
     }
 
-    // Todo : 장바구니 수량 업뎃 (cartId 이용하면 될듯)
+    // 장바구니 수량 업뎃 (cartId 이용하면 될듯)
+    @PutMapping("/cart/update")
+    public ResponseEntity<Cart> updateCart(@RequestBody UpdateCartReq updateCartReq) {
+        return ResponseEntity.ok(cartService.updateCart(updateCartReq.getCartId(), updateCartReq.getQuantity()));
+    }
+
+    // 장바구니 삭제
+    @DeleteMapping("/cart/{cartId}")
+    public ResponseEntity<Void> deleteCart(@PathVariable("cartId") Long cartId) {
+        cartService.deleteCart(cartId);
+        return ResponseEntity.noContent().build();
+    }
 }
