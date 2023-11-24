@@ -2,6 +2,8 @@ package com.stdApi.pacificOcean.controller;
 
 import com.stdApi.pacificOcean.model.Member;
 import com.stdApi.pacificOcean.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin("*")
+@Api(value = "User Controller", description = "회원 관련된 API")
 public class UserController {
 
     private final UserService userService;
@@ -59,6 +62,7 @@ public class UserController {
     // 회원가입
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "회원가입", notes = "회원으로 가입합니다.")
     public Member signUp(@RequestBody SignUpRequest signUpRequest) throws Exception{
         if (!userService.isVerified(signUpRequest.getEmail())) {
             throw new Exception("Unverified email address");
@@ -70,6 +74,7 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
+    @ApiOperation(value = "로그인", notes = "로그인을 합니다.")
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest loginRequest) {
         try {
             Map<String, Object> userInfo = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
@@ -85,6 +90,7 @@ public class UserController {
 
     // 로그아웃
     @PostMapping("/logout")
+    @ApiOperation(value = "로그아웃", notes = "로그아웃")
     public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         SecurityContextHolder.clearContext();
         request.logout();
@@ -94,6 +100,7 @@ public class UserController {
 
     // 프로필 조회
     @GetMapping("/profile")
+    @ApiOperation(value = "프로필 조회", notes = "프로필을 조회 합니다.")
     public ResponseEntity<Member> getProfile(@RequestParam String userId) {
         try {
             Member member = userService.getProfile(userId);
@@ -105,6 +112,7 @@ public class UserController {
     // todo : 프로필 업데이트 시 사용자 정보 추가 업데이트
     // 프로필 업데이트
     @PutMapping("/profile")
+    @ApiOperation(value = "프로필 업데이트", notes = "프로필을 업데이트 합니다.")
     public ResponseEntity<Member> updateProfile(@RequestParam String userEmail, @RequestBody UpdateProfileRequest updateProfileRequest) {
         try {
             Member updatedMember = userService.updateProfile(userEmail, updateProfileRequest.getNewUsername(), updateProfileRequest.getNewPassword());
@@ -116,6 +124,7 @@ public class UserController {
 
     // 회원탈퇴
     @PostMapping("/deleteProfile")
+    @ApiOperation(value = "회원탈퇴", notes = "회원을 탈퇴합니다.")
     public ResponseEntity<Member> deleteProfile(@RequestParam String userEmail) {
         try {
             Member deletedMember = userService.deleteProfile(userEmail);
@@ -126,6 +135,7 @@ public class UserController {
     }
 
     @PostMapping("/update-token")
+    @ApiOperation(value = "토큰 업데이트", notes = "토큰 업데이트")
     public ResponseEntity<?> updateAccessToken(@RequestBody Map<String, String> tokenRequest) {
         String refreshToken = tokenRequest.get("refreshToken");
 
@@ -140,6 +150,7 @@ public class UserController {
 
     // 이메일로 인증 코드 보내기
     @PostMapping("/send-verification-email")
+    @ApiOperation(value = "이메일 인증 보내기", notes = "이메일 인증 코드를 보냅니다.")
     public ResponseEntity<?> sendVerificationEmail(@RequestBody EmailRequest request) {
         try {
             userService.sendVerificationEmail(request.getEmail());
@@ -151,6 +162,7 @@ public class UserController {
 
     // 이메일 인증 코드 확인
     @PostMapping("/verify-email")
+    @ApiOperation(value = "이메일 인증 확인", notes = "이메일 인증 코드를 확인합니다.")
     public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> verificationRequest) {
         String userEmail = verificationRequest.get("email");
         String code = verificationRequest.get("code");
@@ -183,6 +195,7 @@ public class UserController {
 
     // url 사용방법
     @GetMapping("/loginSuccess")
+    @ApiOperation(value = "간편 로그인", notes = "간편 로그인 성공 시 로그인 합니다.")
     public void getLoginInfo(HttpServletResponse response, OAuth2AuthenticationToken token) throws IOException {
         String userEmail = token.getPrincipal().getAttribute("email");
         String jwt = userService.simpleLogin(userEmail);

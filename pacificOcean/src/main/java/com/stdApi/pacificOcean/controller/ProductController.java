@@ -5,6 +5,8 @@ import com.stdApi.pacificOcean.model.Product;
 import com.stdApi.pacificOcean.service.InvenService;
 import com.stdApi.pacificOcean.service.ProductService;
 import com.stdApi.pacificOcean.service.StorageService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin("*")
+@Api(value = "Product Controller", description = "상품 관련된 API")
 public class ProductController {
     private final ProductService productService;
 
@@ -51,6 +54,7 @@ public class ProductController {
     //상품 등록
     @PostMapping("/registerProduct")
     @Transactional // 트랜잭션 관리
+    @ApiOperation(value = "상품 등록", notes = "상품을 등록합니다.")
     public ResponseEntity<Product> registerProduct(@RequestPart("regiProductReq") RegiProductReq regiProductReq, @RequestPart("file") MultipartFile file) {
         try {
             String storedFileUrl = storageService.storeFile(file);
@@ -78,6 +82,7 @@ public class ProductController {
 
     // 상품 전체 조회
     @GetMapping("/products")
+    @ApiOperation(value = "상품 전체조회", notes = "상품을 전체조회합니다.")
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
@@ -85,6 +90,7 @@ public class ProductController {
 
     // 상품 하나 조회
     @GetMapping("/products/{productId}")
+    @ApiOperation(value = "상품 하나조회", notes = "상품을 하나조회합니다.")
     public ResponseEntity<Optional<Product>> getProductById(@PathVariable("productId") Long productId) {
         Optional<Product> product = productService.getProductById(productId);
         return ResponseEntity.ok(product);
@@ -92,6 +98,7 @@ public class ProductController {
 
     // 상품 이름으로 검색
     @GetMapping("/productSearch")
+    @ApiOperation(value = "상품 이름으로 검색", notes = "상품을 이름으로 검색합니다.")
     public ResponseEntity<List<Product>> getProductByName(@RequestParam("searchName") String searchName) {
         List<Product> searchProduct = productService.getProductByName(searchName);
         if (!searchProduct.isEmpty()) {
