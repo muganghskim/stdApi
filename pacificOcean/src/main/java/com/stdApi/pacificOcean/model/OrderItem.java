@@ -3,41 +3,34 @@ package com.stdApi.pacificOcean.model;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "Transaction")
+@Table(name = "OrderItem")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Transaction {
+public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tid;
+    private Long orderItemId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userNo")
     private Member member;
 
-    @OneToMany(mappedBy = "transaction")
-    private List<OrderItem> orderItems = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tidNo")
+    private Transaction transaction;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "deliveryId")
-    private Delivery delivery;
+    @JoinColumn(name = "pdNo")
+    private Product product;
 
-//    private String address1;
-//    private String address2;
-//    private String address3;
+    private int quantity;
 
-    private String rcvName;
-
-    private String rcvPhn;
-
-    private String tidStat;
+    private int price;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
@@ -62,23 +55,18 @@ public class Transaction {
         this.updatedAt= new Date();
     }
 
-
     @Builder
-    public Transaction(Long tid, Member member, Delivery delivery, String rcvName, String rcvPhn, String tidStat) {
-        this.tid = tid;
+    public OrderItem(Long orderItemId, Member member, Transaction transaction, Product product, int quantity, int price ) {
+        this.orderItemId = orderItemId;
         this.member = member;
-        this.delivery = delivery;
-//        this.address1 = address1;
-//        this.address2 = address2;
-//        this.address3 = address3;
-        this.rcvName = rcvName;
-        this.rcvPhn = rcvPhn;
-        this.tidStat = tidStat;
+        this.transaction = transaction;
+        this.product = product;
+        this.quantity = quantity;
+        this.price = price;
     }
 
-    public void addOrderItem(OrderItem orderItem) {
-        orderItems.add(orderItem);
-        orderItem.setTransaction(this);
+    public void setTransaction(Transaction transaction) {
+        this.transaction = transaction;
     }
-
 }
+

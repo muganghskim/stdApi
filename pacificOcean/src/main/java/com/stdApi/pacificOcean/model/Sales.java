@@ -18,7 +18,7 @@ public class Sales {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long saleId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tidNo")
     private Transaction transaction;
 

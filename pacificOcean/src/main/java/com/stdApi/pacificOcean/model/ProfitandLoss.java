@@ -17,11 +17,11 @@ public class ProfitandLoss {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long plId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "revenueNo")
     private Revenue revenue;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "expenseNo")
     private Expenses expenses;
 
