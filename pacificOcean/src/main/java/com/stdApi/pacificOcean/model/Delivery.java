@@ -1,15 +1,13 @@
 package com.stdApi.pacificOcean.model;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "Delivery")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Delivery {

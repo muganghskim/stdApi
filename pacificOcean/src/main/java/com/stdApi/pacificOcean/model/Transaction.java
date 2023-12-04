@@ -39,6 +39,10 @@ public class Transaction {
 
     private String tidStat;
 
+    private String paymentMethod;
+
+    private int totalAmount;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
     private Date createdAt;
@@ -64,7 +68,7 @@ public class Transaction {
 
 
     @Builder
-    public Transaction(Long tid, Member member, Delivery delivery, String rcvName, String rcvPhn, String tidStat) {
+    public Transaction(Long tid, Member member, Delivery delivery, String rcvName, String rcvPhn, String tidStat, String paymentMethod) {
         this.tid = tid;
         this.member = member;
         this.delivery = delivery;
@@ -74,11 +78,13 @@ public class Transaction {
         this.rcvName = rcvName;
         this.rcvPhn = rcvPhn;
         this.tidStat = tidStat;
+        this.paymentMethod = paymentMethod;
     }
 
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
         orderItem.setTransaction(this);
+        this.totalAmount += orderItem.getPrice();
     }
 
 }
