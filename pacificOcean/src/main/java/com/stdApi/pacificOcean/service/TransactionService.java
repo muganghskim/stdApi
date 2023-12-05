@@ -22,13 +22,15 @@ public class TransactionService {
     private final UserRepository userRepository;
     private final DeliveryRepository deliveryRepository;
     private final OrderItemRepository orderItemRepository;
+    private final RevenueService revenueService;
 
     @Autowired
-    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, DeliveryRepository deliveryRepository, OrderItemRepository orderItemRepository) {
+    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, DeliveryRepository deliveryRepository, OrderItemRepository orderItemRepository, RevenueService revenueService) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.deliveryRepository = deliveryRepository;
         this.orderItemRepository = orderItemRepository;
+        this.revenueService = revenueService;
     }
 
     @Transactional
@@ -51,6 +53,11 @@ public class TransactionService {
             transaction.addOrderItem(orderItem);
         }
 
-        return transactionRepository.save(transaction);
+        transactionRepository.save(transaction);
+
+        revenueService.createRevenue(transaction.getTid(), transaction.getTotalAmount());
+
+        return transaction;
+
     }
 }

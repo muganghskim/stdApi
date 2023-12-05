@@ -19,16 +19,10 @@ public class Revenue {
     private Long revenueId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "saleNo")
-    private Sales sales;
+    @JoinColumn(name = "tid")
+    private Transaction transaction;
 
-    private String tsfpDay;
-
-    private String tsfpWeek;
-
-    private String tsfpMonth;
-
-    private String tsfpYear;
+    private int amount;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
@@ -54,12 +48,9 @@ public class Revenue {
     }
 
     @Builder
-    public Revenue(Long revenueId, Sales sales, String tsfpDay, String tsfpWeek, String tsfpMonth, String tsfpYear) {
+    public Revenue(Long revenueId, Transaction transaction, String tsfpDay, String tsfpWeek, String tsfpMonth, String tsfpYear, int amount) {
         this.revenueId = revenueId;
-        this.sales = sales;
-        this.tsfpDay = tsfpDay;
-        this.tsfpWeek = tsfpWeek;
-        this.tsfpMonth = tsfpMonth;
-        this.tsfpYear = tsfpYear;
+        this.transaction = transaction;
+        this.amount = amount;
     }
 }

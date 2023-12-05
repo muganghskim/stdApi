@@ -24,6 +24,10 @@ public class Expenses {
 
     private int taxes;
 
+    private int refund;
+
+    private int totalExpenses;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
     private Date createdAt;
@@ -48,10 +52,12 @@ public class Expenses {
     }
 
     @Builder
-    public Expenses(Long expenseId, int salaries, int bills, int taxes) {
+    public Expenses(Long expenseId, int salaries, int bills, int refund, int taxes, int totalExpenses) {
         this.expenseId = expenseId;
         this.salaries = salaries;
         this.bills = bills;
+        this.refund = refund;
         this.taxes = taxes;
+        this.totalExpenses = totalExpenses;
     }
 }

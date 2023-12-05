@@ -1,29 +1,29 @@
 package com.stdApi.pacificOcean.model;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "ProfitandLoss")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class ProfitandLoss {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long plId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "revenueNo")
+    @JoinColumn(name = "revenueId")
     private Revenue revenue;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "expenseNo")
+    @JoinColumn(name = "expenseId")
     private Expenses expenses;
+
+    private int profit;
 
     private int totalProfit;
 
@@ -50,10 +50,11 @@ public class ProfitandLoss {
         this.updatedAt= new Date();
     }
     @Builder
-    public ProfitandLoss(Long plId, Revenue revenue, Expenses expenses, int totalProfit) {
+    public ProfitandLoss(Long plId, Revenue revenue, Expenses expenses, int profit, int totalProfit) {
         this.plId = plId;
         this.revenue = revenue;
         this.expenses = expenses;
+        this.profit = profit;
         this.totalProfit = totalProfit;
     }
 }
