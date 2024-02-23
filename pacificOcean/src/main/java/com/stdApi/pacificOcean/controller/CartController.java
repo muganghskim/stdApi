@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,29 +50,44 @@ public class CartController {
     @PostMapping("/cart/create")
     @ApiOperation(value = "장바구니 생성", notes = "장바구니를 생성합니다.")
     public ResponseEntity<Cart> addToCart(@RequestBody RegiCartReq regiCartReq) {
-
-        return ResponseEntity.ok(cartService.addToCart(regiCartReq.getUserEmail(), regiCartReq.getPdNo(), regiCartReq.getQuantity()));
+        try {
+            return ResponseEntity.ok(cartService.addToCart(regiCartReq.getUserEmail(), regiCartReq.getPdNo(), regiCartReq.getQuantity()));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     // 장바구니 전체 조회
     @GetMapping("/cart/{userEmail}")
     @ApiOperation(value = "장바구니 전체 조회", notes = "유저의 장바구니를 조회합니다.")
     public ResponseEntity<List<Cart>> getCartsByUserId(@ApiParam(value = "장바구니 전체 조회 하려는 userEmail", required = true) @PathVariable("userEmail") String userEmail) {
-        return ResponseEntity.ok(cartService.getCartsByUserId(userEmail));
+        try{
+            return ResponseEntity.ok(cartService.getCartsByUserId(userEmail));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     // 장바구니 수량 업뎃 (cartId 이용하면 될듯)
     @PutMapping("/cart/update")
     @ApiOperation(value = "장바구니 수량 업데이트", notes = "유저의 장바구니를 상품을 업데이트 합니다.")
     public ResponseEntity<Cart> updateCart(@RequestBody UpdateCartReq updateCartReq) {
-        return ResponseEntity.ok(cartService.updateCart(updateCartReq.getCartId(), updateCartReq.getQuantity()));
+        try{
+            return ResponseEntity.ok(cartService.updateCart(updateCartReq.getCartId(), updateCartReq.getQuantity()));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     // 장바구니 삭제
     @DeleteMapping("/cart/{cartId}")
     @ApiOperation(value = "장바구니 삭제", notes = "유저의 장바구니를 삭제합니다.")
     public ResponseEntity<Void> deleteCart(@ApiParam(value = "장바구니 삭제 하려는 cartId", required = true) @PathVariable("cartId") Long cartId) {
-        cartService.deleteCart(cartId);
-        return ResponseEntity.noContent().build();
+        try{
+            cartService.deleteCart(cartId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }

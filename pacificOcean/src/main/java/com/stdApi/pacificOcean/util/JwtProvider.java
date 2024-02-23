@@ -71,7 +71,7 @@ public class JwtProvider {
                 .setSubject(userEmail)
                 .setIssuedAt(Date.from(now.toInstant()))
                 .setExpiration(Date.from(refreshTokenExpiration.toInstant()))
-                .signWith(SignatureAlgorithm.HS512, jwtConfiguration.getSecret())
+                .signWith(SignatureAlgorithm.HS512, jwtConfiguration.getRef())
                 .compact();
     }
 

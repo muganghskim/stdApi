@@ -162,7 +162,7 @@ public class UserService {
 
         if (existingCode.isPresent()) {
             EmailAuth emailAuth = existingCode.get();
-            emailAuth.setExpiresAt(new Date(0));
+            emailAuth.setExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000));
             emailAuth.setCode(verificationCode);
             emailAuthRepository.save(emailAuth);
         } else {

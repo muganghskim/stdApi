@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,10 @@ public class ExpensesController {
     @PostMapping("/expenses/create")
     @ApiOperation(value = "비용 생성", notes = "발생한 비용을 기록합니다.")
     public ResponseEntity<Expenses> createExpenses(@RequestBody ExpensesReq request){
-        return ResponseEntity.ok(expensesService.createExpenses(request.getSalaries(), request.getTaxes(), request.getBills(), request.getRefund()));
+        try {
+            return ResponseEntity.ok(expensesService.createExpenses(request.getSalaries(), request.getTaxes(), request.getBills(), request.getRefund()));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }

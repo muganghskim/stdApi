@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,10 @@ public class TransactionController {
     @PostMapping("/transaction/create")
     @ApiOperation(value = "거래 생성", notes = "거래를 생성합니다.")
     public ResponseEntity<Transaction> createTransaction(@RequestBody TransactionReq request) {
-        return ResponseEntity.ok(transactionService.createTransaction(request.getUserEmail(), request.getDeliveryId(), request.getRcvName(), request.getRcvPhn(), request.getTidStat(), request.getPaymentMethod(), request.getOrderItemIds()));
+        try{
+            return ResponseEntity.ok(transactionService.createTransaction(request.getUserEmail(), request.getDeliveryId(), request.getRcvName(), request.getRcvPhn(), request.getTidStat(), request.getPaymentMethod(), request.getOrderItemIds()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }

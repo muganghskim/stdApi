@@ -10,6 +10,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,27 +87,41 @@ public class ProductController {
     @GetMapping("/products")
     @ApiOperation(value = "상품 전체조회", notes = "상품을 전체조회합니다.")
     public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(products);
+        try{
+            List<Product> products = productService.getAllProducts();
+            return ResponseEntity.ok(products);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
+
 
     // 상품 하나 조회
     @GetMapping("/products/{productId}")
     @ApiOperation(value = "상품 하나조회", notes = "상품을 하나조회합니다.")
     public ResponseEntity<Optional<Product>> getProductById(@PathVariable("productId") Long productId) {
-        Optional<Product> product = productService.getProductById(productId);
-        return ResponseEntity.ok(product);
+        try{
+            Optional<Product> product = productService.getProductById(productId);
+            return ResponseEntity.ok(product);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
     }
 
     // 상품 이름으로 검색
     @GetMapping("/productSearch")
     @ApiOperation(value = "상품 이름으로 검색", notes = "상품을 이름으로 검색합니다.")
     public ResponseEntity<List<Product>> getProductByName(@RequestParam("searchName") String searchName) {
-        List<Product> searchProduct = productService.getProductByName(searchName);
-        if (!searchProduct.isEmpty()) {
-            return ResponseEntity.ok(searchProduct);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        try{
+            List<Product> searchProduct = productService.getProductByName(searchName);
+            if (!searchProduct.isEmpty()) {
+                return ResponseEntity.ok(searchProduct);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }

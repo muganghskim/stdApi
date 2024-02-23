@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,10 @@ public class OrderItemController {
     @PostMapping("/orderItem/create")
     @ApiOperation(value = "주문 생성", notes = "주문을 생성합니다.")
     public ResponseEntity<OrderItem> createOrderItem(@RequestBody OrderItemReq request) {
-        return ResponseEntity.ok(orderItemService.createOrderItem(request.getUserEmail(), request.getPdNo(), request.getQuantity(), request.getPrice()));
+        try{
+            return ResponseEntity.ok(orderItemService.createOrderItem(request.getUserEmail(), request.getPdNo(), request.getQuantity(), request.getPrice()));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }

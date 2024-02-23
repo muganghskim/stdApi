@@ -59,16 +59,31 @@ public class UserController {
         private String newPassword;
     }
 
+    @Data
+    public static class VerificationRequest {
+        private String email;
+        private String code;
+    }
+
+    @Data
+    public static class TokenRequest {
+        private String refreshToken;
+    }
+
     // 회원가입
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "회원가입", notes = "회원으로 가입합니다.")
-    public Member signUp(@RequestBody SignUpRequest signUpRequest) throws Exception{
-        if (!userService.isVerified(signUpRequest.getEmail())) {
-            throw new Exception("Unverified email address");
+    public ResponseEntity<Member> signUp(@RequestBody SignUpRequest signUpRequest) throws Exception{
+        try {
+            if (!userService.isVerified(signUpRequest.getEmail())) {
+                throw new Exception("Unverified email address");
+            }
+            Member member = userService.signUp(signUpRequest.getEmail(), signUpRequest.getPassword(), signUpRequest.getUsername());
+            return ResponseEntity.ok(member);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
-
-        return userService.signUp(signUpRequest.getEmail(), signUpRequest.getPassword(), signUpRequest.getUsername());
     }
 
 
@@ -136,8 +151,8 @@ public class UserController {
 
     @PostMapping("/update-token")
     @ApiOperation(value = "토큰 업데이트", notes = "토큰 업데이트")
-    public ResponseEntity<?> updateAccessToken(@RequestBody Map<String, String> tokenRequest) {
-        String refreshToken = tokenRequest.get("refreshToken");
+    public ResponseEntity<?> updateAccessToken(@RequestBody TokenRequest tokenRequest) {
+        String refreshToken = tokenRequest.getRefreshToken();
 
         try {
             // 액세스 토큰 업데이트
@@ -163,9 +178,9 @@ public class UserController {
     // 이메일 인증 코드 확인
     @PostMapping("/verify-email")
     @ApiOperation(value = "이메일 인증 확인", notes = "이메일 인증 코드를 확인합니다.")
-    public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> verificationRequest) {
-        String userEmail = verificationRequest.get("email");
-        String code = verificationRequest.get("code");
+    public ResponseEntity<?> verifyEmail(@RequestBody VerificationRequest verificationRequest) {
+        String userEmail = verificationRequest.getEmail();
+        String code = verificationRequest.getCode();
 
         try {
             userService.verifyEmail(userEmail, code);
