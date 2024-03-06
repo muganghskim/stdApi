@@ -10,6 +10,7 @@ import java.util.Date;
 @Setter
 @Table(name = "Cart")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,7 @@
 package com.stdApi.pacificOcean.model;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +18,9 @@ public class Subcategory {
 
     private String subcategoryName;
 
-    @ManyToOne
-    @JoinColumn(name = "categoryId")
-    private Category category;
+    @Builder
+    public Subcategory(Long subcategoryId, String subcategoryName) {
+        this.subcategoryId = subcategoryId;
+        this.subcategoryName = subcategoryName;
+    }
 }

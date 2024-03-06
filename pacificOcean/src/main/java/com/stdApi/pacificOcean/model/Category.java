@@ -20,8 +20,8 @@ public class Category {
 
     private String categoryName;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<Subcategory> subcategories;
+//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+//    private List<Subcategory> subcategories;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)

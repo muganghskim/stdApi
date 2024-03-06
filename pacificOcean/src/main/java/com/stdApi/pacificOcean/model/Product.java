@@ -1,5 +1,7 @@
 package com.stdApi.pacificOcean.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +14,7 @@ import java.util.Date;
 @Getter
 @Table(name = "Product")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Product {
 
     @Id
@@ -21,8 +24,14 @@ public class Product {
     private String pdName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoryNo")
+    @JoinColumn(name = "categoryId")
+    @JsonIgnore
     private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subcategoryId")
+    @JsonIgnore
+    private Subcategory subcategory;
 
     private String pdDetail;
 
@@ -61,10 +70,11 @@ public class Product {
         this.updatedAt= new Date();
     }
     @Builder
-    public Product(Long pdNo, String pdName, Category category, String pdDetail, Member member, int pdPrice, String pdStat, String pdSize, String pdImg) {
+    public Product(Long pdNo, String pdName, Category category, Subcategory subcategory, String pdDetail, Member member, int pdPrice, String pdStat, String pdSize, String pdImg) {
         this.pdNo = pdNo;
         this.pdName = pdName;
         this.category = category;
+        this.subcategory = subcategory;
         this.pdDetail = pdDetail;
         this.member = member;
         this.pdPrice = pdPrice;

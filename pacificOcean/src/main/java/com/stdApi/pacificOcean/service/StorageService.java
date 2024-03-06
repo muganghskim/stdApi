@@ -32,7 +32,12 @@ public class StorageService {
             Path targetLocation = uploadDir.resolve(filename);
             log.info("타겟 위치: {}", targetLocation);
 
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            // 대상 파일이 이미 존재하는 경우 삭제 후 새로 생성
+            if (Files.exists(targetLocation)) {
+                Files.delete(targetLocation);
+            }
+
+            Files.copy(file.getInputStream(), targetLocation);
             log.info("파일 저장 성공");
 
             String fileUrl = "/img/" + filename;

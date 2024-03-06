@@ -1,6 +1,7 @@
 package com.stdApi.pacificOcean.controller;
 
 import com.stdApi.pacificOcean.model.Cart;
+import com.stdApi.pacificOcean.model.CartDTO;
 import com.stdApi.pacificOcean.model.Member;
 import com.stdApi.pacificOcean.model.Product;
 import com.stdApi.pacificOcean.service.CartService;
@@ -35,15 +36,14 @@ public class CartController {
     @Data
     public static class RegiCartReq {
         String userEmail;
-        Long pdNo;
-        int quantity;
+        String pdNo;
+        String quantity;
     }
 
     @Data
     public static class UpdateCartReq {
-        Long cartId;
-
-        int quantity;
+        String cartId;
+        String quantity;
     }
 
     // 장바구니 생성
@@ -51,7 +51,7 @@ public class CartController {
     @ApiOperation(value = "장바구니 생성", notes = "장바구니를 생성합니다.")
     public ResponseEntity<Cart> addToCart(@RequestBody RegiCartReq regiCartReq) {
         try {
-            return ResponseEntity.ok(cartService.addToCart(regiCartReq.getUserEmail(), regiCartReq.getPdNo(), regiCartReq.getQuantity()));
+            return ResponseEntity.ok(cartService.addToCart(regiCartReq.getUserEmail(), Long.parseLong(regiCartReq.getPdNo()), Integer.parseInt(regiCartReq.getQuantity())));
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -60,7 +60,7 @@ public class CartController {
     // 장바구니 전체 조회
     @GetMapping("/cart/{userEmail}")
     @ApiOperation(value = "장바구니 전체 조회", notes = "유저의 장바구니를 조회합니다.")
-    public ResponseEntity<List<Cart>> getCartsByUserId(@ApiParam(value = "장바구니 전체 조회 하려는 userEmail", required = true) @PathVariable("userEmail") String userEmail) {
+    public ResponseEntity<List<CartDTO>> getCartsByUserId(@ApiParam(value = "장바구니 전체 조회 하려는 userEmail", required = true) @PathVariable("userEmail") String userEmail) {
         try{
             return ResponseEntity.ok(cartService.getCartsByUserId(userEmail));
         } catch (Exception e){
@@ -73,7 +73,19 @@ public class CartController {
     @ApiOperation(value = "장바구니 수량 업데이트", notes = "유저의 장바구니를 상품을 업데이트 합니다.")
     public ResponseEntity<Cart> updateCart(@RequestBody UpdateCartReq updateCartReq) {
         try{
-            return ResponseEntity.ok(cartService.updateCart(updateCartReq.getCartId(), updateCartReq.getQuantity()));
+            return ResponseEntity.ok(cartService.updateCart(Long.parseLong(updateCartReq.getCartId()), Integer.parseInt(updateCartReq.getQuantity())));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PostMapping("/cart/remove")
+    @ApiOperation(value = "장바구니 수량 삭제", notes = "유저의 장바구니를 상품을 삭제 합니다.")
+    public ResponseEntity<?> removeCart(@RequestBody UpdateCartReq updateCartReq) {
+        log.info("heh: {}", updateCartReq);
+        try{
+            cartService.removeCart(Long.parseLong(updateCartReq.getCartId()), Integer.parseInt(updateCartReq.getQuantity()));
+            return ResponseEntity.ok("200");
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

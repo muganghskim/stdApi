@@ -13,4 +13,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findByPdNo(Long pdNo);
 
+//    List<Product> findByPdNoIn(List<Long> pdNos); // 새로운 메서드 추가
 }

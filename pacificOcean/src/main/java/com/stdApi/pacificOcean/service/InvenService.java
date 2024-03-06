@@ -38,7 +38,8 @@ public class InvenService {
         Optional<Inventory> invenOpt = invenRepository.findByProduct(product);
 
         if(!invenOpt.isPresent()){
-            throw new RuntimeException("inventory 정보없음");
+//            throw new RuntimeException("inventory 정보없음");
+            return false;
         }
 
         return true;
