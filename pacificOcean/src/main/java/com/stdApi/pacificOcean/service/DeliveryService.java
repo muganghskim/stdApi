@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -26,17 +28,23 @@ public class DeliveryService {
 
     // 배송지 추가
     @Transactional
-    public Delivery addDelivery(String userEmail, String userAddress1, String userAddress2, String userAddress3){
-        Member member = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new IllegalArgumentException("Invalid user email"));
+    public void addDelivery(String userEmail, String userAddress1, String userAddress2, String userAddress3){
+        Optional<Member> memberOpt = userRepository.findByUserEmail(userEmail);
+
+        if (!memberOpt.isPresent()) {
+            throw new RuntimeException("회원을 찾을 수 없습니다.");
+        }
 
         Delivery delivery = Delivery.builder()
-                .member(member)
+                .member(memberOpt.get())
                 .userAddress1(userAddress1)
                 .userAddress2(userAddress2)
                 .userAddress3(userAddress3)
                 .build();
 
-        return deliveryRepository.save(delivery);
+        deliveryRepository.save(delivery);
+
+
     }
 
     // 배송지 정보 업데이트
@@ -53,9 +61,15 @@ public class DeliveryService {
     }
 
     // 배송지 정보 조회
-    public Delivery getDelivery(Long deliverId){
-        return deliveryRepository.findById(deliverId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid delivery id"));
+    public List<Delivery> getDelivery(String userEmail){
+        Optional<Member> memberOpt = userRepository.findByUserEmail(userEmail);
+
+        if (!memberOpt.isPresent()) {
+            throw new RuntimeException("회원을 찾을 수 없습니다.");
+        }
+
+
+        return deliveryRepository.findByMember(memberOpt.get());
     }
 
     // 배송지 정보 삭제

@@ -11,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -34,13 +37,27 @@ public class OrderItemController {
         this.orderItemService = orderItemService;
     }
 
-    @PostMapping("/orderItem/create")
-    @ApiOperation(value = "주문 생성", notes = "주문을 생성합니다.")
-    public ResponseEntity<OrderItem> createOrderItem(@RequestBody OrderItemReq request) {
-        try{
-            return ResponseEntity.ok(orderItemService.createOrderItem(request.getUserEmail(), request.getPdNo(), request.getQuantity(), request.getPrice()));
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//    @PostMapping("/orderItem/create")
+//    @ApiOperation(value = "주문 생성", notes = "주문을 생성합니다.")
+//    public ResponseEntity<OrderItem> createOrderItem(@RequestBody OrderItemReq request) {
+//        try{
+//            return ResponseEntity.ok(orderItemService.createOrderItem(request.getUserEmail(), request.getPdNo(), request.getQuantity(), request.getPrice()));
+//        } catch (Exception e){
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//        }
+//    }
+@PostMapping("/orderItem/create")
+@ApiOperation(value = "주문 생성", notes = "주문을 생성합니다.")
+public ResponseEntity<List<OrderItem>> createOrderItems(@RequestBody List<OrderItemReq> requests) {
+    List<OrderItem> createdOrderItems = new ArrayList<>();
+    try {
+        for (OrderItemReq request : requests) {
+            OrderItem createdOrderItem = orderItemService.createOrderItem(request.getUserEmail(), request.getPdNo(), request.getQuantity(), request.getPrice());
+            createdOrderItems.add(createdOrderItem);
         }
+        return ResponseEntity.ok(createdOrderItems);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
+}
 }

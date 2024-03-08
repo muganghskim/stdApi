@@ -1,6 +1,7 @@
 package com.stdApi.pacificOcean.controller;
 
 import com.stdApi.pacificOcean.model.Delivery;
+import com.stdApi.pacificOcean.model.SimpleProductDTO;
 import com.stdApi.pacificOcean.service.DeliveryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -20,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class DeliveryController {
 
     @Data
-    public static class DeliveryReq {
+    public static class userAddress {
         private String userEmail;
         private String userAddress1;
         private String userAddress2;
@@ -44,19 +47,20 @@ public class DeliveryController {
 
     @PostMapping("/delivery/add")
     @ApiOperation(value = "배송지 추가", notes = "배송지를 추가합니다.")
-    public ResponseEntity<Delivery> addDelivery(@RequestBody DeliveryReq request){
+    public ResponseEntity<?> addDelivery(@RequestBody userAddress req){
         try {
-            return ResponseEntity.ok(deliveryService.addDelivery(request.getUserEmail(), request.getUserAddress1(), request.getUserAddress2(), request.getUserAddress3()));
+            deliveryService.addDelivery(req.getUserEmail(), req.getUserAddress1(), req.getUserAddress2(), req.getUserAddress3());
+            return ResponseEntity.ok("200");
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
-    @GetMapping("/delivery/{deliveryId}")
+    @GetMapping("/delivery/{userEmail}")
     @ApiOperation(value = "배송지 조회", notes = "배송지를 조회합니다.")
-    public ResponseEntity<Delivery> getDelivery(@ApiParam(value = "배송지 조회 id", required = true) @PathVariable("deliveryId") Long deliveryId){
+    public ResponseEntity<List<Delivery>> getDelivery(@ApiParam(value = "배송지 조회 id", required = true) @PathVariable("userEmail") String userEmail){
         try{
-            return ResponseEntity.ok(deliveryService.getDelivery(deliveryId));
+            return ResponseEntity.ok(deliveryService.getDelivery(userEmail));
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

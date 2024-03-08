@@ -35,15 +35,15 @@ public class CartController {
 
     @Data
     public static class RegiCartReq {
-        String userEmail;
-        String pdNo;
-        String quantity;
+        private String userEmail;
+        private String pdNo;
+        private String quantity;
     }
 
     @Data
     public static class UpdateCartReq {
-        String cartId;
-        String quantity;
+        private String cartId;
+        private String quantity;
     }
 
     // 장바구니 생성
