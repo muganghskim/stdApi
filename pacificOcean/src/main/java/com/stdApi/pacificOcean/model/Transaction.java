@@ -84,7 +84,8 @@ public class Transaction {
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
         orderItem.setTransaction(this);
-        this.totalAmount += orderItem.getPrice();
+        this.totalAmount += orderItem.getPrice() * orderItem.getQuantity();
     }
+
 
 }

@@ -1,6 +1,7 @@
 package com.stdApi.pacificOcean.controller;
 
 import com.stdApi.pacificOcean.model.OrderItem;
+import com.stdApi.pacificOcean.model.OrderItemDTO;
 import com.stdApi.pacificOcean.service.OrderItemService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,11 +49,11 @@ public class OrderItemController {
 //    }
 @PostMapping("/orderItem/create")
 @ApiOperation(value = "주문 생성", notes = "주문을 생성합니다.")
-public ResponseEntity<List<OrderItem>> createOrderItems(@RequestBody List<OrderItemReq> requests) {
-    List<OrderItem> createdOrderItems = new ArrayList<>();
+public ResponseEntity<List<OrderItemDTO>> createOrderItems(@RequestBody List<OrderItemReq> requests) {
+    List<OrderItemDTO> createdOrderItems = new ArrayList<>();
     try {
         for (OrderItemReq request : requests) {
-            OrderItem createdOrderItem = orderItemService.createOrderItem(request.getUserEmail(), request.getPdNo(), request.getQuantity(), request.getPrice());
+            OrderItemDTO createdOrderItem = orderItemService.createOrderItem(request.getUserEmail(), request.getPdNo(), request.getQuantity(), request.getPrice());
             createdOrderItems.add(createdOrderItem);
         }
         return ResponseEntity.ok(createdOrderItems);

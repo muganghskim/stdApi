@@ -28,7 +28,7 @@ public class RevenueService {
     }
 
     @Transactional
-    public Revenue createRevenue(Long tid, int amount) {
+    public void createRevenue(Long tid, int amount) {
         Transaction transaction = transactionRepository.findById(tid).orElseThrow(() -> new IllegalArgumentException("Invalid transaction id"));
 
         Revenue revenue = Revenue.builder()
@@ -40,7 +40,7 @@ public class RevenueService {
 
         profitAndLossService.updateProfit(revenue.getRevenueId());
 
-        return revenue;
+
     }
 
 }

@@ -42,9 +42,10 @@ public class TransactionController {
 
     @PostMapping("/transaction/create")
     @ApiOperation(value = "거래 생성", notes = "거래를 생성합니다.")
-    public ResponseEntity<Transaction> createTransaction(@RequestBody TransactionReq request) {
+    public ResponseEntity<?> createTransaction(@RequestBody TransactionReq request) {
         try{
-            return ResponseEntity.ok(transactionService.createTransaction(request.getUserEmail(), request.getDeliveryId(), request.getRcvName(), request.getRcvPhn(), request.getTidStat(), request.getPaymentMethod(), request.getOrderItemIds()));
+            transactionService.createTransaction(request.getUserEmail(), request.getDeliveryId(), request.getRcvName(), request.getRcvPhn(), request.getTidStat(), request.getPaymentMethod(), request.getOrderItemIds());
+            return ResponseEntity.ok("200");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

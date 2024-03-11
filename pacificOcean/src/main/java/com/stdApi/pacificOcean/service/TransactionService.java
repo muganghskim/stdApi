@@ -13,7 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @Service
 public class TransactionService {
@@ -23,18 +27,20 @@ public class TransactionService {
     private final DeliveryRepository deliveryRepository;
     private final OrderItemRepository orderItemRepository;
     private final RevenueService revenueService;
+    private final InvenService invenService;
 
     @Autowired
-    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, DeliveryRepository deliveryRepository, OrderItemRepository orderItemRepository, RevenueService revenueService) {
+    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, DeliveryRepository deliveryRepository, OrderItemRepository orderItemRepository, RevenueService revenueService, InvenService invenService) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.deliveryRepository = deliveryRepository;
         this.orderItemRepository = orderItemRepository;
         this.revenueService = revenueService;
+        this.invenService = invenService;
     }
 
     @Transactional
-    public com.stdApi.pacificOcean.model.Transaction createTransaction(String userEmail, Long deliveryId, String rcvName, String rcvPhn, String tidStat, String paymentMethod, List<Long> orderItemIds) {
+    public void createTransaction(String userEmail, Long deliveryId, String rcvName, String rcvPhn, String tidStat, String paymentMethod, List<Long> orderItemIds) {
         Member member = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new IllegalArgumentException("Invalid member id"));
         Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(() -> new IllegalArgumentException("Invalid delivery id"));
 
@@ -47,17 +53,32 @@ public class TransactionService {
                 .paymentMethod(paymentMethod)
                 .build();
 
-        
+        List<Map<String, String>> pdDataList = new ArrayList<>();
+
+
         for(Long orderItemId : orderItemIds) {
             OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(() -> new IllegalArgumentException("Invalid order item id"));
             transaction.addOrderItem(orderItem);
+
+            Map<String, String> pdData = new HashMap<>();
+            pdData.put("pdNo", String.valueOf(orderItem.getProduct().getPdNo()));
+            pdData.put("pdQuantity", String.valueOf(orderItem.getQuantity()));
+
+            pdDataList.add(pdData);
         }
+
+        // 한 번에 처리
+        for (Map<String, String> pdData : pdDataList) {
+            invenService.decreaseInventory(pdData.get("pdNo"), pdData.get("pdQuantity"));
+        }
+
+
 
         transactionRepository.save(transaction);
 
         revenueService.createRevenue(transaction.getTid(), transaction.getTotalAmount());
 
-        return transaction;
+//        return transaction;
 
     }
 }

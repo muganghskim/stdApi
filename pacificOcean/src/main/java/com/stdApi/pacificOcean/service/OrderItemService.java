@@ -2,6 +2,7 @@ package com.stdApi.pacificOcean.service;
 
 import com.stdApi.pacificOcean.model.Member;
 import com.stdApi.pacificOcean.model.OrderItem;
+import com.stdApi.pacificOcean.model.OrderItemDTO;
 import com.stdApi.pacificOcean.model.Product;
 import com.stdApi.pacificOcean.repository.OrderItemRepository;
 import com.stdApi.pacificOcean.repository.ProductRepository;
@@ -28,7 +29,7 @@ public class OrderItemService {
     }
 
     @Transactional
-    public OrderItem createOrderItem(String userEmail, Long pdNo, int quantity, int price) {
+    public OrderItemDTO createOrderItem(String userEmail, Long pdNo, int quantity, int price) {
         Member member = userRepository.findByUserEmail(userEmail).orElseThrow(() -> new IllegalArgumentException("Invalid user email"));
         Product product = productRepository.findByPdNo(pdNo).orElseThrow(() -> new IllegalArgumentException("Invalid product id"));
 
@@ -39,6 +40,11 @@ public class OrderItemService {
                 .price(price)
                 .build();
 
-        return orderItemRepository.save(orderItem);
+        orderItemRepository.save(orderItem);
+
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setOrderItemId(orderItem.getOrderItemId());
+
+        return dto;
     }
 }

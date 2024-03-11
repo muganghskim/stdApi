@@ -119,13 +119,13 @@ public class ProductController {
             // 상품 등록
             Product registeredProduct = productService.registerProduct(userEmail, pdName, categoryName, subCategoryName, pdDetail, Integer.parseInt(pdPrice), pdStat, pdSize, storedFileUrl);
 
-            // 등록된 상품이면 수량 만큼 추가
-            if(invenService.checkInventory(registeredProduct)){
-                invenService.increaseInventory(registeredProduct, quantity);
-            }else {
+//            // 등록된 상품이면 수량 만큼 추가
+//            if(invenService.checkInventory(registeredProduct)){
+//                invenService.increaseInventory(registeredProduct, quantity);
+//            }else {
                 // 등록된 상품이 아니면 수량만큼 등록
                 Inventory createRecord = invenService.createInventoryRecord(registeredProduct, quantity, "normal");
-            }
+//            }
 
             return ResponseEntity.ok("200");
         } catch (Exception e) {

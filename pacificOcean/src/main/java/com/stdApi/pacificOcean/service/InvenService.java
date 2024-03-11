@@ -46,11 +46,15 @@ public class InvenService {
     };
 
     // 상품의 재고 감소
-    public void decreaseInventory(Inventory inventory, int quantity) {
-        if (inventory.getQuantity() < quantity) {
-            throw new RuntimeException("재고 부족");
+    public void decreaseInventory(String pdNo, String quantity) {
+        Inventory inventory = invenRepository.findProductNumber(Long.parseLong(pdNo));
+
+        int newQuantity = inventory.getQuantity() - Integer.parseInt(quantity);
+        if (newQuantity < 0) {
+            throw new RuntimeException("재고가 부족합니다.");
         }
-        inventory.setQuantity(inventory.getQuantity() - quantity);
+
+        inventory.setQuantity(newQuantity);
 
         // 데이터베이스에 재고 업데이트
         invenRepository.save(inventory);
