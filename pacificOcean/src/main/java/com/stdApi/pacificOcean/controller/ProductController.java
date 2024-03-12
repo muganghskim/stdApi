@@ -93,7 +93,7 @@ public class ProductController {
 //        }
 //    }
 
-    @PostMapping("/registerProduct")
+    @PostMapping("/admin/registerProduct")
     @Transactional // 트랜잭션 관리
     @ApiOperation(value = "상품 등록", notes = "상품을 등록합니다.")
     public ResponseEntity<?> registerProduct(@RequestPart String pdName,

@@ -14,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/admin")
 @CrossOrigin("*")
 @Api(value = "ProfifandLoss Controller", description = "수익 관련된 API")
 public class ProfitandLossController {

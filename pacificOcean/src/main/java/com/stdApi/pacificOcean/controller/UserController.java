@@ -219,4 +219,17 @@ public class UserController {
         response.sendRedirect("http://localhost:3000/loginSuccess?token=" + URLEncoder.encode(jwt, "UTF-8"));
     }
 
+    @GetMapping("/admin/login")
+    @ApiOperation(value = "관리자 로그인", notes = "관리자 로그인 성공 시 로그인 합니다.")
+    public ResponseEntity<?> getAdminLogin() {
+
+        try {
+            log.info("관리자 두두 등장");
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/admin")
 @CrossOrigin("*")
 @Api(value = "Expenses Controller", description = "비용 관련된 API")
 public class ExpensesController {

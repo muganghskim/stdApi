@@ -19,7 +19,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/admin")
 @CrossOrigin("*")
 @Api(value = "Category Controller", description = "카테고리 관련된 API")
 public class CategoryController {

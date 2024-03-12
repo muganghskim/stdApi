@@ -71,6 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/api/admin/**").hasRole("ADMIN") // 관리자 권한이 있는 도메인만 접근을 허용합니다.
                 .antMatchers("/admin/**").hasRole("ADMIN") // 관리자 권한이 있는 도메인만 접근을 허용합니다.
                 .antMatchers("/","/**").permitAll()
                 .anyRequest().authenticated()
