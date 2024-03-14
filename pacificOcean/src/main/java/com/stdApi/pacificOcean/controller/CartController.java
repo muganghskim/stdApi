@@ -49,9 +49,10 @@ public class CartController {
     // 장바구니 생성
     @PostMapping("/cart/create")
     @ApiOperation(value = "장바구니 생성", notes = "장바구니를 생성합니다.")
-    public ResponseEntity<Cart> addToCart(@RequestBody RegiCartReq regiCartReq) {
+    public ResponseEntity<?> addToCart(@RequestBody RegiCartReq regiCartReq) {
         try {
-            return ResponseEntity.ok(cartService.addToCart(regiCartReq.getUserEmail(), Long.parseLong(regiCartReq.getPdNo()), Integer.parseInt(regiCartReq.getQuantity())));
+            cartService.addToCart(regiCartReq.getUserEmail(), Long.parseLong(regiCartReq.getPdNo()), Integer.parseInt(regiCartReq.getQuantity()));
+            return ResponseEntity.ok("200");
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

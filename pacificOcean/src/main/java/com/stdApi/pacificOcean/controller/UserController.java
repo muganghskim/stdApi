@@ -216,7 +216,7 @@ public class UserController {
         String jwt = userService.simpleLogin(userEmail);
 
         // Redirect to the client app with the JWT token as a URL parameter
-        response.sendRedirect("http://localhost:3000/loginSuccess?token=" + URLEncoder.encode(jwt, "UTF-8"));
+        response.sendRedirect("http://localhost:5173/loginSuccess?token=" + URLEncoder.encode(jwt, "UTF-8") + "&email=" + userEmail);
     }
 
     @GetMapping("/admin/login")

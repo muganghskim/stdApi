@@ -33,7 +33,7 @@ public class CartService {
     }
 
     @Transactional
-    public Cart addToCart(String userEmail, Long pdNo, int quantity) {
+    public void addToCart(String userEmail, Long pdNo, int quantity) {
         Optional<Member> memberOpt = userRepository.findByUserEmail(userEmail);
         Optional<Product> productOpt = productRepository.findByPdNo(pdNo);
 
@@ -55,7 +55,7 @@ public class CartService {
             // 이미 카트에 해당 상품이 있는 경우 수량을 업데이트
             Cart cartItem = cartItemOpt.get();
             cartItem.setQuantity(cartItem.getQuantity() + quantity);
-            return cartRepository.save(cartItem);
+            cartRepository.save(cartItem);
         } else {
             // 카트에 해당 상품이 없는 경우 새로운 카트 아이템 생성
             Cart cart = Cart.builder()
@@ -63,7 +63,7 @@ public class CartService {
                     .product(product)
                     .quantity(quantity)
                     .build();
-            return cartRepository.save(cart);
+            cartRepository.save(cart);
         }
     }
 
