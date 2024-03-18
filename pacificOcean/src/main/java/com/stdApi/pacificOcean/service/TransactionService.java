@@ -46,7 +46,9 @@ public class TransactionService {
 
         com.stdApi.pacificOcean.model.Transaction transaction = Transaction.builder()
                 .member(member)
-                .delivery(delivery)
+                .address1(delivery.getUserAddress1())
+                .address2(delivery.getUserAddress2())
+                .address3(delivery.getUserAddress3())
                 .rcvName(rcvName)
                 .rcvPhn(rcvPhn)
                 .tidStat(tidStat)

@@ -144,7 +144,13 @@ public class CartService {
         updatedQuantity = Math.max(updatedQuantity, 0);
 
         cart.setQuantity(updatedQuantity);
-
+        if (updatedQuantity == 0) {
+            // 수량이 0이 되면 해당 장바구니 항목을 삭제합니다.
+            deleteCart(cartId);
+        } else {
+            cart.setQuantity(updatedQuantity);
+            cartRepository.save(cart); // 업데이트된 수량으로 장바구니 정보를 저장합니다.
+        }
     }
 
     @Transactional

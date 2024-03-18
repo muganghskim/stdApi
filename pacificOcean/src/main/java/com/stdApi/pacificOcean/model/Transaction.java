@@ -25,13 +25,13 @@ public class Transaction {
     @OneToMany(mappedBy = "transaction")
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "deliveryId")
-    private Delivery delivery;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "deliveryId")
+//    private Delivery delivery;
 
-//    private String address1;
-//    private String address2;
-//    private String address3;
+    private String address1;
+    private String address2;
+    private String address3;
 
     private String rcvName;
 
@@ -68,13 +68,13 @@ public class Transaction {
 
 
     @Builder
-    public Transaction(Long tid, Member member, Delivery delivery, String rcvName, String rcvPhn, String tidStat, String paymentMethod) {
+    public Transaction(Long tid, Member member, String address1, String address2, String address3, String rcvName, String rcvPhn, String tidStat, String paymentMethod) {
         this.tid = tid;
         this.member = member;
-        this.delivery = delivery;
-//        this.address1 = address1;
-//        this.address2 = address2;
-//        this.address3 = address3;
+//        this.delivery = delivery;
+        this.address1 = address1;
+        this.address2 = address2;
+        this.address3 = address3;
         this.rcvName = rcvName;
         this.rcvPhn = rcvPhn;
         this.tidStat = tidStat;

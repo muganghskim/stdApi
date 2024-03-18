@@ -71,6 +71,7 @@ public class UserController {
     }
 
     // 회원가입
+    // Todo : 예외처리 세분화
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "회원가입", notes = "회원으로 가입합니다.")
