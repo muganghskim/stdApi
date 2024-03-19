@@ -14,9 +14,9 @@ public class ProductDTO {
 
     private String pdName;
 
-    private long categoryId;
+    private String categoryId;
 
-    private long subcategoryId;
+    private String subcategoryId;
 
     private String pdDetail;
 

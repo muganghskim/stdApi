@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,6 @@ public class ProductService {
     public Product registerProduct(String userEmail, String pdName, String categoryName, String subCategoryName, String pdDetail, int pdPrice,
                                    String pdStat, String pdSize, String pdImg) {
 
-        log.info("here1");
         Optional<Member> memberOpt = userRepository.findByUserEmail(userEmail);
         Optional<Category> categoryOpt = categoryRepository.findByCategoryName(categoryName);
         Optional<Subcategory> subcategoryOpt = subCategoryRepository.findBySubcategoryName(subCategoryName);
@@ -101,6 +101,7 @@ public class ProductService {
     }
 
     // 상품 하나 조회(디테일 페이지)
+    @Transactional(readOnly = true)
     public ProductDTO getProductById(Long pdNo) {
 
         Optional<Product> productDetail = productRepository.findById(pdNo);
@@ -115,8 +116,8 @@ public class ProductService {
             Product product = productDetail.get();
             Category category = product.getCategory();
             Subcategory subcategory = product.getSubcategory();
-            Long categoryId = category.getCategoryId();
-            Long subcategoryId = subcategory.getSubcategoryId();
+            String categoryId = category.getCategoryName();
+            String subcategoryId = subcategory.getSubcategoryName();
             // product 사용
             ProductDTO dto = new ProductDTO();
             dto.setPdNo(product.getPdNo());
