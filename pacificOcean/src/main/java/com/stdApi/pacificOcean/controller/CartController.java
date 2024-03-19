@@ -1,5 +1,6 @@
 package com.stdApi.pacificOcean.controller;
 
+import com.stdApi.pacificOcean.exception.InvenLackedException;
 import com.stdApi.pacificOcean.model.Cart;
 import com.stdApi.pacificOcean.model.CartDTO;
 import com.stdApi.pacificOcean.model.Member;
@@ -53,6 +54,8 @@ public class CartController {
         try {
             cartService.addToCart(regiCartReq.getUserEmail(), Long.parseLong(regiCartReq.getPdNo()), Integer.parseInt(regiCartReq.getQuantity()));
             return ResponseEntity.ok("200");
+        } catch (InvenLackedException e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null); // 422
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

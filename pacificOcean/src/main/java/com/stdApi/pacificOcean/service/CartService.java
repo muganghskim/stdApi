@@ -1,7 +1,9 @@
 package com.stdApi.pacificOcean.service;
 
+import com.stdApi.pacificOcean.exception.InvenLackedException;
 import com.stdApi.pacificOcean.model.*;
 import com.stdApi.pacificOcean.repository.CartRepository;
+import com.stdApi.pacificOcean.repository.InvenRepository;
 import com.stdApi.pacificOcean.repository.ProductRepository;
 import com.stdApi.pacificOcean.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -25,11 +27,14 @@ public class CartService {
 
     private final ProductRepository productRepository;
 
+    private final InvenRepository invenRepository;
 
-    public CartService(CartRepository cartRepository, UserRepository userRepository, ProductRepository productRepository) {
+
+    public CartService(CartRepository cartRepository, UserRepository userRepository, ProductRepository productRepository, InvenRepository invenRepository) {
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
+        this.invenRepository = invenRepository;
     }
 
     @Transactional
@@ -44,6 +49,14 @@ public class CartService {
         if (!productOpt.isPresent()){
             throw new RuntimeException("상품를 찾을 수 없습니다.");
         }
+
+        // 재고 존재 여부 및 수량 확인
+        Inventory inventory = invenRepository.findByProduct(productOpt.get())
+                .orElseThrow(() -> new RuntimeException("재고를 찾을 수 없습니다."));
+        if (inventory.getQuantity() == 0) {
+            throw new InvenLackedException("재고가 없습니다.");
+        }
+
 
         Member member = memberOpt.get();
         Product product = productOpt.get();

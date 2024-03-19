@@ -1,5 +1,6 @@
 package com.stdApi.pacificOcean.service;
 
+import com.stdApi.pacificOcean.exception.InvenLackedException;
 import com.stdApi.pacificOcean.model.Delivery;
 import com.stdApi.pacificOcean.model.Member;
 import com.stdApi.pacificOcean.model.OrderItem;
@@ -71,7 +72,11 @@ public class TransactionService {
 
         // 한 번에 처리
         for (Map<String, String> pdData : pdDataList) {
-            invenService.decreaseInventory(pdData.get("pdNo"), pdData.get("pdQuantity"));
+            try {
+                invenService.decreaseInventory(pdData.get("pdNo"), pdData.get("pdQuantity"));
+            } catch (InvenLackedException e){
+                throw new InvenLackedException("재고 부족");
+            }
         }
 
 

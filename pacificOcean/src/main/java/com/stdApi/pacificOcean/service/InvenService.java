@@ -1,12 +1,15 @@
 package com.stdApi.pacificOcean.service;
 
-import com.stdApi.pacificOcean.model.Inventory;
-import com.stdApi.pacificOcean.model.Product;
+import com.stdApi.pacificOcean.exception.InvenLackedException;
+import com.stdApi.pacificOcean.model.*;
 import com.stdApi.pacificOcean.repository.InvenRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -51,7 +54,7 @@ public class InvenService {
 
         int newQuantity = inventory.getQuantity() - Integer.parseInt(quantity);
         if (newQuantity < 0) {
-            throw new RuntimeException("재고가 부족합니다.");
+            throw new InvenLackedException("재고가 부족합니다.");
         }
 
         inventory.setQuantity(newQuantity);
@@ -74,6 +77,20 @@ public class InvenService {
         // 데이터베이스에 재고 업데이트
         invenRepository.save(inventory);
     };
+
+    @Transactional(readOnly = true)
+    public Page<InvenDTO> findAll(Pageable pageable) {
+        Page<Inventory> page = invenRepository.findAll(pageable);
+        return page.map(entity -> {
+            InvenDTO dto = new InvenDTO();
+            dto.setInvenId(entity.getInvenId());
+            dto.setStockType(entity.getStockType());
+            dto.setQuantity(entity.getQuantity());
+            dto.setPdName(entity.getProduct().getPdName());
+            dto.setCreatedAt(entity.getCreatedAt());
+            return dto;
+        });
+    }
 
 
 }

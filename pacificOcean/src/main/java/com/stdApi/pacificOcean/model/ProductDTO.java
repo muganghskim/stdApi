@@ -27,4 +27,6 @@ public class ProductDTO {
     private String pdSize;
 
     private String pdImg;
+
+    private int pdQuantity;
 }

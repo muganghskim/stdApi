@@ -3,11 +3,8 @@ package com.stdApi.pacificOcean.service;
 
 
 import com.stdApi.pacificOcean.model.*;
-import com.stdApi.pacificOcean.repository.CategoryRepository;
-import com.stdApi.pacificOcean.repository.ProductRepository;
+import com.stdApi.pacificOcean.repository.*;
 
-import com.stdApi.pacificOcean.repository.SubCategoryRepository;
-import com.stdApi.pacificOcean.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,13 +22,15 @@ public class ProductService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final SubCategoryRepository subCategoryRepository;
+    private final InvenRepository invenRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository, UserRepository userRepository, CategoryRepository categoryRepository, SubCategoryRepository subCategoryRepository) {
+    public ProductService(ProductRepository productRepository, UserRepository userRepository, CategoryRepository categoryRepository, SubCategoryRepository subCategoryRepository, InvenRepository invenRepository) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.subCategoryRepository = subCategoryRepository;
+        this.invenRepository = invenRepository;
     }
 
     // 상품 등록
@@ -106,6 +105,12 @@ public class ProductService {
 
         Optional<Product> productDetail = productRepository.findById(pdNo);
 
+        Optional<Inventory> inventory = invenRepository.findByProduct(productDetail.get());
+
+        if (!inventory.isPresent()) {
+            throw new RuntimeException("인벤토리를 찾을 수 없습니다.");
+        }
+
         if (productDetail.isPresent()) {
             Product product = productDetail.get();
             Category category = product.getCategory();
@@ -123,6 +128,7 @@ public class ProductService {
             dto.setPdSize(product.getPdSize());
             dto.setPdStat(product.getPdStat());
             dto.setPdName(product.getPdName());
+            dto.setPdQuantity(inventory.get().getQuantity());
 
             return dto;
         }

@@ -25,6 +25,7 @@ public class ProfitandLossController {
     public ProfitandLossController(ProfitAndLossService profitandLossService) {
         this.profitandLossService = profitandLossService;
     }
+
     @GetMapping("/all")
     @ApiOperation(value = "수익 전체 조회", notes = "수익을 전체조회합니다.")
     public Page<ProfitandLossDTO> getAllProfitAndLoss(Pageable pageable) {

@@ -1,5 +1,7 @@
 package com.stdApi.pacificOcean.controller;
 
+import com.stdApi.pacificOcean.exception.EmailNotVerifiedException;
+import com.stdApi.pacificOcean.exception.InvenLackedException;
 import com.stdApi.pacificOcean.model.OrderItem;
 import com.stdApi.pacificOcean.model.OrderItemDTO;
 import com.stdApi.pacificOcean.service.OrderItemService;
@@ -57,6 +59,8 @@ public ResponseEntity<List<OrderItemDTO>> createOrderItems(@RequestBody List<Ord
             createdOrderItems.add(createdOrderItem);
         }
         return ResponseEntity.ok(createdOrderItems);
+    } catch (InvenLackedException e) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null); // 422
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
