@@ -1,5 +1,7 @@
 package com.stdApi.pacificOcean.service;
 
+import com.stdApi.pacificOcean.exception.EmailAlreadyExistsException;
+import com.stdApi.pacificOcean.exception.EmailNotVerifiedException;
 import com.stdApi.pacificOcean.model.EmailAuth;
 import com.stdApi.pacificOcean.model.Member;
 import com.stdApi.pacificOcean.repository.EmailAuthRepository;
@@ -54,7 +56,7 @@ public class UserService {
         // 중복 회원 확인
         Optional<Member> existingMember = userRepository.findByUserEmail(userEmail);
         if (existingMember.isPresent()) {
-            throw new RuntimeException("이미 가입되어 있는 회원입니다.");
+            throw new EmailAlreadyExistsException("이미 가입되어 있는 회원입니다.");
         }
 
         String encodedPassword = passwordEncoder.encode(password);

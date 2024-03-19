@@ -1,5 +1,7 @@
 package com.stdApi.pacificOcean.controller;
 
+import com.stdApi.pacificOcean.exception.EmailAlreadyExistsException;
+import com.stdApi.pacificOcean.exception.EmailNotVerifiedException;
 import com.stdApi.pacificOcean.model.Member;
 import com.stdApi.pacificOcean.service.UserService;
 import io.swagger.annotations.Api;
@@ -75,15 +77,20 @@ public class UserController {
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "회원가입", notes = "회원으로 가입합니다.")
-    public ResponseEntity<Member> signUp(@RequestBody SignUpRequest signUpRequest) throws Exception{
+    public ResponseEntity<?> signUp(@RequestBody SignUpRequest signUpRequest) throws Exception{
         try {
             if (!userService.isVerified(signUpRequest.getEmail())) {
-                throw new Exception("Unverified email address");
+                throw new EmailNotVerifiedException("Unverified email address");
             }
             Member member = userService.signUp(signUpRequest.getEmail(), signUpRequest.getPassword(), signUpRequest.getUsername());
             return ResponseEntity.ok(member);
+
+        } catch (EmailNotVerifiedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage()); // 403
+        } catch (EmailAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); // 409
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().build(); // 400
         }
     }
 
