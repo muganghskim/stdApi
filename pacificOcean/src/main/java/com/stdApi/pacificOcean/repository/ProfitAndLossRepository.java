@@ -31,4 +31,16 @@ public interface ProfitAndLossRepository extends JpaRepository<ProfitandLoss, Lo
     // 일별 조회
     @Query("SELECT p FROM ProfitandLoss p WHERE FUNCTION('DAY', p.createdAt) = :day AND FUNCTION('MONTH', p.createdAt) = :month AND FUNCTION('YEAR', p.createdAt) = :year")
     Page<ProfitandLoss> findByDayMonthAndYear(@Param("day") int day, @Param("month") int month, @Param("year") int year, Pageable pageable);
+
+    // 총 수익
+    @Query("SELECT SUM(p.profit) FROM ProfitandLoss p")
+    Integer calculateTotalProfit();
+
+    // 월 수익
+    @Query("SELECT SUM(p.profit) FROM ProfitandLoss p WHERE FUNCTION('MONTH', p.createdAt) = :month AND FUNCTION('YEAR', p.createdAt) = :year")
+    Integer calculateMonthAndYear(@Param("month") int month, @Param("year") int year);
+
+    // 일 수익
+    @Query("SELECT SUM(p.profit) FROM ProfitandLoss p WHERE FUNCTION('DAY', p.createdAt) = :day AND FUNCTION('MONTH', p.createdAt) = :month AND FUNCTION('YEAR', p.createdAt) = :year")
+    Integer calculateDayMonthAndYear(@Param("day") int day, @Param("month") int month, @Param("year") int year);
 }

@@ -17,7 +17,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.OAS_30)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.stdApi.pacificOcean.controller"))
-                .paths(regex("/api.*"))
+                .paths(regex("/.*"))
                 .build();
     }
 }

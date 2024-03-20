@@ -10,5 +10,9 @@ import java.util.Date;
 public class ProfitandLossDTO {
     private Long plId;
     private int profit;
+    private int salaries;
+    private int bills;
+    private int taxes;
+    private int refund;
     private Date createdAt;
 }

@@ -1,6 +1,7 @@
 package com.stdApi.pacificOcean.util;
 
 import com.stdApi.pacificOcean.model.Member;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Map;
 
@@ -10,6 +11,7 @@ public class OAuthAttributes {
     private String name;
     private String email;
     private String picture;
+
 
     public OAuthAttributes(Map<String, Object> attributes, String nameAttributeKey, String name, String email, String picture) {
         this.attributes = attributes;
@@ -66,6 +68,10 @@ public class OAuthAttributes {
     // .. getter/setter 생략
 
     public Member toEntity() {
+        String rawPassword = PasswordGenerator.generateRandomPassword(10); // 예: 10자리 랜덤 비밀번호 생성
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encodedPassword = encoder.encode(rawPassword); // 비밀번호 해싱
+
         return Member.builder()
                 .userEmail(email)
                 .userName(name)
@@ -73,7 +79,7 @@ public class OAuthAttributes {
                 .userImg(picture)
                 .userPhn("defaultPhn")
                 // Default or placeholder values for other fields
-                .password("defaultPassword")
+                .password(encodedPassword)
                 .userRole("defaultRole")
                 .build();
     }

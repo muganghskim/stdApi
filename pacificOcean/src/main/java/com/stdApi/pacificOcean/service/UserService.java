@@ -111,6 +111,7 @@ public class UserService {
         return memberOpt.orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
     }
 
+    // Todo : 프로필 이미지 업데이트
     // 프로필 업데이트
     public Member updateProfile(String userEmail, String newUsername, String newPassword) {
         Optional<Member> memberOpt = userRepository.findByUserEmail(userEmail);

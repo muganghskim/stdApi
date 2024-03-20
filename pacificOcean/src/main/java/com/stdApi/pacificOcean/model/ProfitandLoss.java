@@ -25,8 +25,6 @@ public class ProfitandLoss {
 
     private int profit;
 
-    private int totalProfit;
-
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
     private Date createdAt;
@@ -50,11 +48,10 @@ public class ProfitandLoss {
         this.updatedAt= new Date();
     }
     @Builder
-    public ProfitandLoss(Long plId, Revenue revenue, Expenses expenses, int profit, int totalProfit) {
+    public ProfitandLoss(Long plId, Revenue revenue, Expenses expenses, int profit) {
         this.plId = plId;
         this.revenue = revenue;
         this.expenses = expenses;
         this.profit = profit;
-        this.totalProfit = totalProfit;
     }
 }

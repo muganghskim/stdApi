@@ -11,14 +11,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@EnableScheduling
 public class ProfitAndLossService {
 
     private final ProfitAndLossRepository profitAndLossRepository;
@@ -28,6 +35,8 @@ public class ProfitAndLossService {
 
 
     private final ExpensesRepository expensesRepository;
+
+    private final Map<String, Integer> cache = new ConcurrentHashMap<>();
 
     @Autowired
     public ProfitAndLossService(ProfitAndLossRepository profitAndLossRepository,RevenueRepository revenueRepository, ExpensesRepository expensesRepository ){
@@ -52,7 +61,7 @@ public class ProfitAndLossService {
             profitAndLoss.setProfit(profit);
 
             // totalProfit 필드 갱신
-            profitAndLoss.setTotalProfit(profitAndLoss.getTotalProfit() + profit);
+//            profitAndLoss.setTotalProfit(profitAndLoss.getTotalProfit() + profit);
 
             profitAndLossRepository.save(profitAndLoss);
         }
@@ -73,43 +82,115 @@ public class ProfitAndLossService {
             profitAndLoss.setProfit(profit);
 
             // totalProfit 필드 갱신
-            profitAndLoss.setTotalProfit(profitAndLoss.getTotalProfit() + profit);
+//            profitAndLoss.setTotalProfit(profitAndLoss.getTotalProfit() + profit);
 
             profitAndLossRepository.save(profitAndLoss);
         }
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public Page<ProfitandLossDTO> findAll(Pageable pageable) {
         Page<ProfitandLoss> page = profitAndLossRepository.findAll(pageable);
         return page.map(entity -> {
             ProfitandLossDTO dto = new ProfitandLossDTO();
             dto.setPlId(entity.getPlId());
             dto.setProfit(entity.getProfit());
+            if(entity.getExpenses() != null){
+                dto.setSalaries(entity.getExpenses().getSalaries());
+                dto.setBills(entity.getExpenses().getBills());
+                dto.setRefund(entity.getExpenses().getRefund());
+                dto.setTaxes(entity.getExpenses().getTaxes());
+            }
             dto.setCreatedAt(entity.getCreatedAt());
             return dto;
         });
     }
 
-
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public Page<ProfitandLossDTO> findByMonthAndYear(int month, int year, Pageable pageable) {
         Page<ProfitandLoss> page = profitAndLossRepository.findByMonthAndYear(month, year, pageable);
         return page.map(entity -> {
             ProfitandLossDTO dto = new ProfitandLossDTO();
             dto.setPlId(entity.getPlId());
             dto.setProfit(entity.getProfit());
+            if(entity.getExpenses() != null){
+                dto.setSalaries(entity.getExpenses().getSalaries());
+                dto.setBills(entity.getExpenses().getBills());
+                dto.setRefund(entity.getExpenses().getRefund());
+                dto.setTaxes(entity.getExpenses().getTaxes());
+            }
             dto.setCreatedAt(entity.getCreatedAt());
             return dto;
         });
     }
-
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public Page<ProfitandLossDTO> findByDayMonthAndYear(int day, int month, int year, Pageable pageable) {
         Page<ProfitandLoss> page = profitAndLossRepository.findByDayMonthAndYear(day, month, year, pageable);
         return page.map(entity -> {
             ProfitandLossDTO dto = new ProfitandLossDTO();
             dto.setPlId(entity.getPlId());
             dto.setProfit(entity.getProfit());
+            if(entity.getExpenses() != null){
+                dto.setSalaries(entity.getExpenses().getSalaries());
+                dto.setBills(entity.getExpenses().getBills());
+                dto.setRefund(entity.getExpenses().getRefund());
+                dto.setTaxes(entity.getExpenses().getTaxes());
+            }
             dto.setCreatedAt(entity.getCreatedAt());
             return dto;
         });
     }
+
+    @Scheduled(cron = "0 0 1 * * ?") // 매일 새벽 1시에 실행
+    public void updateTotalProfitCache() {
+        Integer totalProfit = profitAndLossRepository.calculateTotalProfit();
+        cache.put("totalProfit", totalProfit);
+    }
+
+    public Integer getTotalProfit() {
+        return cache.getOrDefault("totalProfit", 0);
+    }
+
+    @Scheduled(cron = "0 0 1 * * ?") // 매일 새벽 1시에 실행
+    public void updateMonthProfitCache() {
+        // 현재 날짜에서 연도와 월을 추출
+        LocalDate now = LocalDate.now();
+        int year = now.getYear();
+        int month = now.getMonthValue();
+
+        Integer monthProfit = profitAndLossRepository.calculateMonthAndYear(month, year);
+        cache.put("monthProfit", monthProfit);
+    }
+
+    public Integer getMonthProfit() {
+        return cache.getOrDefault("monthProfit", 0);
+    }
+
+    @Scheduled(cron = "0 */3 * * * *") // 매 3분마다 실행
+    public void updateDayProfitCache() {
+        // 현재 날짜에서 연도와 월을 추출
+        LocalDate now = LocalDate.now();
+        int year = now.getYear();
+        int month = now.getMonthValue();
+        int day = now.getDayOfMonth();
+
+        Integer dayProfit = profitAndLossRepository.calculateDayMonthAndYear(day, month, year);
+        cache.put("dayProfit", dayProfit);
+    }
+
+    public Integer getDayProfit() {
+        return cache.getOrDefault("dayProfit", 0);
+    }
+
+    public Map<String, Integer> getProfitData(){
+
+        Map<String, Integer> profitData = new HashMap<>();
+
+        profitData.put("totalProfit", getTotalProfit());
+        profitData.put("monthProfit", getMonthProfit());
+        profitData.put("dayProfit", getDayProfit());
+
+        return  profitData;
+    }
+
 }
