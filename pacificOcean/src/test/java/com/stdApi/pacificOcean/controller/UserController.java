@@ -91,15 +91,15 @@ public class UserController {
     }
     // todo : 프로필 업데이트 시 사용자 정보 추가 업데이트
     // 프로필 업데이트
-    @PutMapping("/profile")
-    public ResponseEntity<Member> updateProfile(@RequestParam String userEmail, @RequestBody UpdateProfileRequest updateProfileRequest) {
-        try {
-            Member updatedMember = userService.updateProfile(userEmail, updateProfileRequest.getNewUsername(), updateProfileRequest.getNewPassword());
-            return ResponseEntity.ok(updatedMember);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
+//    @PutMapping("/profile")
+//    public ResponseEntity<Member> updateProfile(@RequestParam String userEmail, @RequestBody UpdateProfileRequest updateProfileRequest) {
+//        try {
+//            Member updatedMember = userService.updateProfile(userEmail, updateProfileRequest.getNewUsername(), updateProfileRequest.getNewPassword());
+//            return ResponseEntity.ok(updatedMember);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//    }
 
     // 회원탈퇴
     @PostMapping("/deleteProfile")

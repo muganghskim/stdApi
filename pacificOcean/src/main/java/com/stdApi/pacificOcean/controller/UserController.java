@@ -3,6 +3,7 @@ package com.stdApi.pacificOcean.controller;
 import com.stdApi.pacificOcean.exception.EmailAlreadyExistsException;
 import com.stdApi.pacificOcean.exception.EmailNotVerifiedException;
 import com.stdApi.pacificOcean.model.Member;
+import com.stdApi.pacificOcean.service.StorageService;
 import com.stdApi.pacificOcean.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,9 +34,12 @@ public class UserController {
 
     private final UserService userService;
 
+    private final StorageService storageService;
+
     @Autowired
-    public UserController(UserService userService ){
+    public UserController(UserService userService, StorageService storageService){
         this.userService = userService;
+        this.storageService = storageService;
     }
 
     @Data
@@ -134,12 +139,27 @@ public class UserController {
     }
     // todo : 프로필 업데이트 시 사용자 정보 추가 업데이트
     // 프로필 업데이트
-    @PutMapping("/profile")
+//    @PutMapping("/profile")
+//    @ApiOperation(value = "프로필 업데이트", notes = "프로필을 업데이트 합니다.")
+//    public ResponseEntity<Member> updateProfile(@RequestParam String userEmail, @RequestBody UpdateProfileRequest updateProfileRequest) {
+//        try {
+//            Member updatedMember = userService.updateProfile(userEmail, updateProfileRequest.getNewUsername(), updateProfileRequest.getNewPassword());
+//            return ResponseEntity.ok(updatedMember);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//    }
+
+    @PostMapping("/profile/update")
     @ApiOperation(value = "프로필 업데이트", notes = "프로필을 업데이트 합니다.")
-    public ResponseEntity<Member> updateProfile(@RequestParam String userEmail, @RequestBody UpdateProfileRequest updateProfileRequest) {
+    public ResponseEntity<?> updateProfile(@RequestPart String userEmail,
+                                           @RequestPart String userName,
+                                           @RequestPart String userPhn,
+                                           @RequestPart(value = "file") MultipartFile file) {
         try {
-            Member updatedMember = userService.updateProfile(userEmail, updateProfileRequest.getNewUsername(), updateProfileRequest.getNewPassword());
-            return ResponseEntity.ok(updatedMember);
+            String storedFileUrl = storageService.storeFile(file);
+            userService.updateProfile(userEmail, userName, userPhn, storedFileUrl);
+            return ResponseEntity.ok("200");
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
@@ -221,10 +241,11 @@ public class UserController {
     @ApiOperation(value = "간편 로그인", notes = "간편 로그인 성공 시 로그인 합니다.")
     public void getLoginInfo(HttpServletResponse response, OAuth2AuthenticationToken token) throws IOException {
         String userEmail = token.getPrincipal().getAttribute("email");
+        String userImg = token.getPrincipal().getAttribute("picture");
         String jwt = userService.simpleLogin(userEmail);
 
         // Redirect to the client app with the JWT token as a URL parameter
-        response.sendRedirect("http://localhost:5173/loginSuccess?token=" + URLEncoder.encode(jwt, "UTF-8") + "&email=" + userEmail);
+        response.sendRedirect("http://localhost:5173/loginSuccess?token=" + URLEncoder.encode(jwt, "UTF-8") + "&email=" + userEmail + "&img=" + userImg);
     }
 
     @GetMapping("/admin/login")

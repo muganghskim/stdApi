@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -95,12 +96,21 @@ public class UserService {
             log.info("일반 사용자 권한");
         }
 
+        Optional<Member> memberOpt = userRepository.findByUserEmail(userId);
+
+        if(!memberOpt.isPresent()){
+            throw new RuntimeException("회원을 찾을 수 없습니다.");
+        }
+
+        Member member = memberOpt.get();
+
         // 토큰, 사용자 이름 및 이메일 리턴
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("token", token);
         resultMap.put("refreshToken", refreshToken); //리프레시 토큰 추가
         resultMap.put("username", username);
         resultMap.put("userId", userId);
+        resultMap.put("img", member.getUserImg());
 
         return resultMap;
     }
@@ -111,9 +121,8 @@ public class UserService {
         return memberOpt.orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
     }
 
-    // Todo : 프로필 이미지 업데이트
     // 프로필 업데이트
-    public Member updateProfile(String userEmail, String newUsername, String newPassword) {
+    public void updateProfile(String userEmail, String newUsername, String newUserPhn, String file) {
         Optional<Member> memberOpt = userRepository.findByUserEmail(userEmail);
         if (!memberOpt.isPresent()) {
             throw new RuntimeException("회원을 찾을 수 없습니다.");
@@ -123,12 +132,14 @@ public class UserService {
         if (newUsername != null) {
             member.setUserName(newUsername);
         }
-        if (newPassword != null) {
-            String encodedPassword = passwordEncoder.encode(newPassword);
-            member.setPassword(encodedPassword);
+        if (newUserPhn != null) {
+            member.setUserPhn(newUserPhn);
+        }
+        if (file != null) {
+            member.setUserImg(file);
         }
 
-        return userRepository.save(member);
+        userRepository.save(member);
     }
 
     // 프로필 삭제

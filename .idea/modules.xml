@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/pacificOcean.iml" filepath="$PROJECT_DIR$/.idea/pacificOcean.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pacificOcean/pacificOcean.iml" filepath="$PROJECT_DIR$/pacificOcean/pacificOcean.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/stdApi.iml" filepath="$PROJECT_DIR$/.idea/stdApi.iml" />
     </modules>
   </component>
 </project>
