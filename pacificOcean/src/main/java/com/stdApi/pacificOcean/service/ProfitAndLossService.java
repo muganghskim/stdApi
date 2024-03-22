@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ public class ProfitAndLossService {
         this.revenueRepository = revenueRepository;
         this.expensesRepository = expensesRepository;
     }
+
 
     @Transactional
     public void updateProfit(Long revenueId) {
@@ -143,8 +145,10 @@ public class ProfitAndLossService {
 
     @Scheduled(cron = "0 0 1 * * ?") // 매일 새벽 1시에 실행
     public void updateTotalProfitCache() {
+
         Integer totalProfit = profitAndLossRepository.calculateTotalProfit();
-        cache.put("totalProfit", totalProfit);
+
+        cache.put("totalProfit", totalProfit != null ? totalProfit : 0);
     }
 
     public Integer getTotalProfit() {
@@ -158,8 +162,12 @@ public class ProfitAndLossService {
         int year = now.getYear();
         int month = now.getMonthValue();
 
+
+
         Integer monthProfit = profitAndLossRepository.calculateMonthAndYear(month, year);
-        cache.put("monthProfit", monthProfit);
+
+        cache.put("monthProfit", monthProfit != null ? monthProfit : 0);
+
     }
 
     public Integer getMonthProfit() {
@@ -174,8 +182,11 @@ public class ProfitAndLossService {
         int month = now.getMonthValue();
         int day = now.getDayOfMonth();
 
+
+
         Integer dayProfit = profitAndLossRepository.calculateDayMonthAndYear(day, month, year);
-        cache.put("dayProfit", dayProfit);
+
+        cache.put("dayProfit", dayProfit != null ? dayProfit : 0);
     }
 
     public Integer getDayProfit() {
