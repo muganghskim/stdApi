@@ -73,7 +73,7 @@ public class OrderItemService {
             dto.setAddress1(entity.getTransaction().getAddress1());
             dto.setAddress2(entity.getTransaction().getAddress2());
             dto.setAddress3(entity.getTransaction().getAddress3());
-            dto.setAddress3(entity.getTransaction().getTidStat());
+            dto.setTidStat(entity.getTransaction().getTidStat());
             dto.setCreatedAt(entity.getCreatedAt());
             dto.setUpdatedAt(entity.getTransaction().getUpdatedAt());
             dto.setPdName(entity.getProduct().getPdName());
@@ -109,7 +109,7 @@ public class OrderItemService {
 
     @org.springframework.transaction.annotation.Transactional
     public void updateOrderItem(Long orderItemId, String stat){
-
+        log.info("orderitemId?: {}", orderItemId);
         Optional<OrderItem> orderItemOptional = orderItemRepository.findById(orderItemId);
 
         if(!orderItemOptional.isPresent()){

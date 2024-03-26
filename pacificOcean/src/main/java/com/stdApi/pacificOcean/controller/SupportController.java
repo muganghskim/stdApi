@@ -33,9 +33,10 @@ public class SupportController {
         return supportService.getSupportAll(pageable);
     }
 
-    @GetMapping("/support/all")
+    // todo : 유저 문의 전체 조회 문제 있음
+    @GetMapping("/support/all/{userEmail}")
     @ApiOperation(value = "유저 문의 전체 조회", notes = "유저가 문의를 전체조회합니다.")
-    public List<SupportDTO> getUserSupportAll(@PathVariable String userEmail){
+    public List<SupportDTO> getUserSupportAll(@PathVariable("userEmail") String userEmail){
         return supportService.getSupportUser(userEmail);
     }
 

@@ -71,10 +71,15 @@ public class OrderItemController {
         return orderItemService.getAdminOrderItems(pageable);
     }
 
-    @GetMapping("/orderItem/all")
+    // todo : 유저 주문 전체 조회 문제 있음
+    @GetMapping("/orderItem/all/{userEmail}")
     @ApiOperation(value = "유저 주문 전체 조회", notes = "유저가 주문을 전체조회합니다.")
-    public List<OrderItemDTO> getOrderItems(@PathVariable String userEmail){
-        return orderItemService.getOrderItems(userEmail);
+    public ResponseEntity<List<OrderItemDTO>> getOrderItems(@PathVariable("userEmail") String userEmail){
+        try{
+            return ResponseEntity.ok(orderItemService.getOrderItems(userEmail));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @PostMapping("/admin/orderItemUpdate")
