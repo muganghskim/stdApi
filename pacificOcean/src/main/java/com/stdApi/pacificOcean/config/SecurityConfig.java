@@ -73,7 +73,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/admin/**").hasRole("ADMIN") // 관리자 권한이 있는 도메인만 접근을 허용합니다.
                 .antMatchers("/admin/**").hasRole("ADMIN") // 관리자 권한이 있는 도메인만 접근을 허용합니다.
-                .antMatchers("/","/api/products/**","/api/login","/api/signup","/api/logout","/api/notice/all").permitAll()
+                .antMatchers("/","/api/products/**","/api/login","/api/signup","/api/logout","/api/notice/all","/api/send-verification-email", "/api/verify-email").permitAll()
+                .antMatchers("/error", "/error/**").permitAll()  // /error 및 하위 경로에 대한 접근 허용
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
