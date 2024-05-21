@@ -15,7 +15,7 @@ public interface InvenRepository extends JpaRepository<Inventory, Long> {
 
     Optional<Inventory> findByProduct(Product product);
 
-    @Query(value = "SELECT s FROM cart s WHERE s.pdNo = :pdNo", nativeQuery = true)
+    @Query(value = "SELECT * FROM Inventory WHERE pdNo = :pdNo", nativeQuery = true)
     Inventory findProductNumber(Long pdNo);
 
     Page<Inventory> findAll(Pageable pageable);

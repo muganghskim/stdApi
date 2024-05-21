@@ -57,6 +57,7 @@ public class CartController {
         } catch (InvenLackedException e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(null); // 422
         } catch (Exception e){
+            log.error("An error occurred while adding to cart", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }

@@ -20,7 +20,7 @@ public class OrderItem {
     @JoinColumn(name = "userNo")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "tidNo")
     private Transaction transaction;
 

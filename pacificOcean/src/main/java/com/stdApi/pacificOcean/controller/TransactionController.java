@@ -47,6 +47,7 @@ public class TransactionController {
             transactionService.createTransaction(request.getUserEmail(), request.getDeliveryId(), request.getRcvName(), request.getRcvPhn(), request.getTidStat(), request.getPaymentMethod(), request.getOrderItemIds());
             return ResponseEntity.ok("200");
         } catch (Exception e) {
+            log.error("taransaction 어디서 에러?", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
