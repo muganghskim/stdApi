@@ -98,6 +98,7 @@ public class OrderItemService {
             orderItemDTO.setAddress2(orderItem.getTransaction().getAddress2());
             orderItemDTO.setAddress3(orderItem.getTransaction().getAddress3());
             orderItemDTO.setTidStat(orderItem.getTransaction().getTidStat());
+            orderItemDTO.setCreatedAt(orderItem.getCreatedAt());
             orderItemDTO.setUpdatedAt(orderItem.getTransaction().getUpdatedAt());
             orderItemDTO.setPdName(orderItem.getProduct().getPdName());
 

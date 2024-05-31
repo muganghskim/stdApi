@@ -71,7 +71,7 @@ public class OrderItemController {
         return orderItemService.getAdminOrderItems(pageable);
     }
 
-    // todo : 유저 주문 전체 조회 문제 있음
+    // todo 페이징 고려
     @GetMapping("/orderItem/all/{userEmail}")
     @ApiOperation(value = "유저 주문 전체 조회", notes = "유저가 주문을 전체조회합니다.")
     public ResponseEntity<List<OrderItemDTO>> getOrderItems(@PathVariable("userEmail") String userEmail){
