@@ -73,14 +73,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/admin/**").hasRole("ADMIN") // 관리자 권한이 있는 도메인만 접근을 허용합니다.
                 .antMatchers("/admin/**").hasRole("ADMIN") // 관리자 권한이 있는 도메인만 접근을 허용합니다.
-                .antMatchers("/","/api/products/**","/api/login","/api/signup","/api/logout","/api/notice/all","/api/send-verification-email", "/api/verify-email", "/api/cart/**", "/api/delivery/**", "/api/profile/**", "/api/update-token", "/api/orderItem/**", "/api/transaction/**", "/api/support/**").permitAll()
+                .antMatchers("/","/loginSuccess","/api/loginSuccess","/api/products/**","/api/login","/api/signup","/api/logout","/api/notice/all","/api/send-verification-email", "/api/verify-email", "/api/cart/**", "/api/delivery/**", "/api/profile/**", "/api/update-token", "/api/orderItem/**", "/api/transaction/**", "/api/support/**").permitAll()
                 .antMatchers("/error", "/error/**").permitAll()  // /error 및 하위 경로에 대한 접근 허용
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
                 .oauth2Login()
-                    .defaultSuccessUrl("/api/loginSuccess")  // 로그인 성공 후 리다이렉트할 URL
+                    .defaultSuccessUrl("http://3.34.188.252/back/api/loginSuccess")  // 로그인 성공 후 리다이렉트할 URL
                     .failureUrl("/loginFailure")         // 로그인 실패 후 리다이렉트할 URL
                     .userInfoEndpoint()                  // 사용자 정보를 가져올 때의 설정들을 담당합니다.
                     .userService(customOAuth2UserService);  // 소셜 로그인 성공 시 후속 조치를 진행할 UserService 인터페이스의 구현체 등록

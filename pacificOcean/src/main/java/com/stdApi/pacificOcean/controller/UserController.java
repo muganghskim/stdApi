@@ -240,13 +240,49 @@ public class UserController {
     @GetMapping("/loginSuccess")
     @ApiOperation(value = "간편 로그인", notes = "간편 로그인 성공 시 로그인 합니다.")
     public void getLoginInfo(HttpServletResponse response, OAuth2AuthenticationToken token) throws IOException {
-        String userEmail = token.getPrincipal().getAttribute("email");
-        String userImg = token.getPrincipal().getAttribute("picture");
+
+        log.info("여기");
+
+        String userEmail = null;
+        String userImg = null;
+
+        if (token != null && token.getPrincipal() != null) {
+            Map<String, Object> attributes = token.getPrincipal().getAttributes();
+            if (attributes.containsKey("kakao_account")) {
+                Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+                userEmail = (String) kakaoAccount.get("email");
+
+                if (kakaoAccount.containsKey("profile")) {
+                    Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+                    userImg = (String) profile.get("profile_image_url");
+                }
+            } else if (attributes.containsKey("response")) {
+                Map<String, Object> responseAttributes = (Map<String, Object>) attributes.get("response");
+                userEmail = (String) responseAttributes.get("email");
+                userImg = (String) responseAttributes.get("profile_image");
+            }
+            else {
+                userEmail = token.getPrincipal().getAttribute("email");
+                userImg = token.getPrincipal().getAttribute("picture");
+            }
+        }
+
+        // userEmail과 userImg가 null인 경우 기본값을 설정하거나 예외 처리
+        if (userEmail == null || userImg == null) {
+            log.error("User email or image is null");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User email or image is null");
+            return;
+        }
+
         String jwt = userService.simpleLogin(userEmail);
 
         // Redirect to the client app with the JWT token as a URL parameter
-        response.sendRedirect("http://localhost:5173/loginSuccess?token=" + URLEncoder.encode(jwt, "UTF-8") + "&email=" + userEmail + "&img=" + userImg);
+        // 개발용
+//    response.sendRedirect("http://localhost:5173/loginSuccess?token=" + URLEncoder.encode(jwt, "UTF-8") + "&email=" + userEmail + "&img=" + userImg);
+        // 프로덕션용
+        response.sendRedirect("http://3.34.188.252/loginSuccess?token=" + URLEncoder.encode(jwt, "UTF-8") + "&email=" + userEmail + "&img=" + userImg);
     }
+
 
     @GetMapping("/admin/login")
     @ApiOperation(value = "관리자 로그인", notes = "관리자 로그인 성공 시 로그인 합니다.")
